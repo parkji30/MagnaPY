@@ -21,9 +21,13 @@ methods to get a detailed explanation.
 2) Description of each parameter is found in the main.py file, but most important, the directories labelled
 
   SRC = "/home/james/Desktop/sbit_compress_py/src"
+  
   OG_SOURCE = "/home/james/Desktop/sbit_compress_py/original"
+  
   COMP_SOURCE = "/home/james/Desktop/sbit_compress_py/compressed"
+  
   DS9 = "/home/james/Desktop/sbit_compress_py/ds9"
+  
   MAIN = "/home/james/Desktop/sbit_compress_py/"
   
   <b>MUST</b> be changed according to where you save this program.
