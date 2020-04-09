@@ -18,7 +18,7 @@ fitsio which is critical for this simulation to work.
 1) Open the <b>main.py file</b>, the entire program is run here, but it is encouraged to read the other files and their 
 methods to get a detailed explanation.
 
-2) Description of each parameter is found in the main.py file, but most important, the directories labelled
+2) Description of each parameter is found in the main.py file, but most important, the directories labelled <b>MUST</b> be changed according to where you save this program.
 
   SRC = "/home/james/Desktop/sbit_compress_py/src"
   
@@ -30,7 +30,7 @@ methods to get a detailed explanation.
   
   MAIN = "/home/james/Desktop/sbit_compress_py/"
   
-  <b>MUST</b> be changed according to where you save this program.
+
   
 I will provide a better update of the methods and their description in the near future, but for now, this is sufficient 
 enough to see a working simulation.
