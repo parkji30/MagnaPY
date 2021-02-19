@@ -1,4 +1,4 @@
-# SuperBIT_Compression
+# telescope_compression
 
 The Balloon-borne Imaging Telescope (aka. SuperBIT) is a wide-field (0.4 deg) instrument operating in the visible-to-near-UV bands (300-900 nm) at a diffraction-limited resolution of 0.25 arc seconds.  This requires 20 milliarcsecond image stability over a 0.5 degree field-of-view for integration periods ranging from 10-30 minutes. When fully operational, SuperBIT will be capable of wide field diffraction-limited observations which will use strong and weak lensing to map out the distribution of dark matter around hundreds of galaxy clusters. Additionally, SuperBIT is well suited for other proposed experiments related to solar planet spectroscopy and exoplanet studies. 
 
