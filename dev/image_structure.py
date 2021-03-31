@@ -17,17 +17,19 @@ class ImageStructure:
         @rtype: None
         """
         self.image_fits = image
-        self.original_data = self.image_fits[0].data
-        self.compressed_data = None
-        self.image_info = self.get_info(image)
         self.compressor = compressor
-
-    def compress_data(self):
+        self.original_data = self.image_fits[0].data
+        self.compressed_data = self.compress_data()
+        # self.image_info = self.get_info(image)
+        
+    def compress_data(self, raw=True):
         """
         @type self:
-
         """
-        self.compressed_data = self.compressor.compress()
+        if raw:
+            self.compressed_data = self.compressor.compress()
+        else:
+            self.compressed_data = self.compressor.uncompress()
 
     # def load_data(self):
     #     """
@@ -45,7 +47,6 @@ class ImageStructure:
         """
         """
         return None
-
 
     def get_image_name(self):
         """

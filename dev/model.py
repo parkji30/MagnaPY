@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
+from astropy.io import fits
 
-class Model:
+class Visualizer:
     """
     The modelling class which will be used to compare the original
     image to it's compressed image.
@@ -23,7 +24,6 @@ class Model:
         self.image_structure = image_object
         self.image_info = self.get_image_info()
 
-
     def get_image_info(self):
         """
         """
@@ -31,29 +31,27 @@ class Model:
             'original': self.image_structure.get_original_data(),
             'compressed': self.image_structure.get_compressed_data()}
 
-
     def Im_show(self):
         """
         Displays the image using matplotlib.pyplot
 
         @type self: Model
         """
-        print(self.image_info['name'])
         plt.figure(figsize=(10, 10))
-        plt.title(self.image_info['name'])
+        plt.title("Original Image")
         plt.imshow(self.image_info['original'])
         plt.colorbar()
         plt.show()
 
-    def Im_show_compress(self):
+    def Im_show_compressed(self):
         """
         Displays the image using matplotlib.pyplot
 
         @type self: Model
         """
-        print(self.image_info['name'])
+        compressed = self.image_info['compressed']
         plt.figure(figsize=(10, 10))
-        plt.title(self.image_info['name'])
-        plt.imshow(self.image_info['compress'])
+        plt.title("Compressed Image")
+        plt.imshow(compressed.data)
         plt.colorbar()
         plt.show()
