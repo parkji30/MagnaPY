@@ -1,22 +1,22 @@
 from astropy.io import fits
+import numpy as np
+from Model import Model
+import os
 
 class Compression:
     """
-    The compression object class that determines what compression 
+    The compression object class that determines what compression
     algorithm will be used.
     """
 
-    def __init__(self, compression_type, data=None, factor=2):
+    def __init__(self, data=None, factor=2, compressed_name='comp.fits'):
         """
         @type self: Compression Object
 
-        @type compresson_type: String 
-            Compression Algorithm to be used)
-
         @type image_structure: ImageStructure Object
 
-        @type factor: Integer 
-            desired compression factor, particularily used with 
+        @type factor: Integer
+            desired compression factor, particularily used with
             HCompression or used as a quantization factor.
 
         Acceptable parameters of compression_type:
@@ -25,52 +25,97 @@ class Compression:
             3) Rice
             4) BitShave
         """
-        self.compression_algorithm = compression_type
-        self.data = data[0].data
-        self.scale_factor = factor
+        self.data = data
+        self.quantize_factor = factor
+        self.compressed_name = compressed_name
 
-    def compress(self):
+    def valid_extension(self):
         """
-        The compress method which compresses the image file based on the 
-        algorithm specified.
-        
-        @type self: Compression Object
-        """     
-        algorithm_dict = {
-            'hcomp': "HCOMPRESS_1",
-            'gzip': "GZIP_1",
-            'rice': "RICE_1"
-        } 
-        
-        # selected_algorithm = algorithm_dict[self.compression_algorithm]
-        try:
-            selected_algorithm = algorithm_dict[self.compression_algorithm]
-        except:
-            return("Could not find Algorithm. Check your spelling?")
+        Checks to see if the image extension is compressible with current
+        Implementation of Balco.
 
-        # print(self.data)
-        # Specific Case of H Compression
-        dt = fits.CompImageHDU(data=self.data, compression_type = "RICE_1")
-        return dt
-        
-        # if selected_algorithm == 'HCOMPRESS_1':
-        #     return fits.CompImageHDU(data=self.data, compression_type = "HCOMPRESS_1", \
-        #     hcomp_scale=self.scale_factor, hcomp_smooth = 1)
-        # # Specific Case of Bit Shaving
-        # elif selected_algorithm == 'Bitshave':
-        #     pass
-        # else:
-        #     return fits.CompImageHDU(data=self.data, compression_type = selected_algorithm) 
-
-         
-    def uncompress(self):
-        """
-        Uncompresses the astropy fits object.
-        
         @type self: Compression
-        @rtype: Numpy array (2D)
-            The uncompressed image.
+        @type image: Numpy Array (2d)
+        @rtype: Boolean
+            Returns true if image is compressible. False otherwise.
         """
-        dt = fits.CompImageHDU(data=self.data, compression_type = "RICE_1")
-        return dt
-        
+
+        name, extension = os.path.splitext(self.compressed_name)
+        KNOWN_EXTENSIONS = ['.jpg', '.png', '.fits', '.jpeg']
+
+        if extension in KNOWN_EXTENSIONS:
+            return True
+        else:
+            return False
+
+    def compress(self, algorithm):
+        """
+        Compressed data packet using the H Transformation method and saves it
+        into a fits file.
+
+        Compression List -> ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
+
+        @type self: Compression
+        @rtype: None
+        """
+        if self.valid_extension():
+            if algorithm =="HCOMPRESS_1":
+                fits.CompImageHDU(self.data, compression_type = algorithm, \
+                hcomp_scale=self.quantize_factor).writeto(algorithm + "_" + self.compressed_name, overwrite=True)
+                print("Hcompress!")
+
+            else:
+                fits.CompImageHDU(self.data, compression_type = algorithm, \
+                quantize_level=self.quantize_factor).writeto(algorithm + "_" + self.compressed_name, overwrite=True)
+                print(algorithm + " Compress!")
+
+    def optimize(self):
+        """
+        Selects the most optimal compression algorithm to be used for given
+        science image.
+
+        TODO- implement libpolycomp for fitting compression.
+
+        @type self: Compression
+        @rtype: None
+        """
+        model_list = []
+        if self.check_extension():
+            try:
+                self.compress(algorithm='HCOMPRESS_1')
+                compressed_image = fits.getdata(self.compressed_name)
+                model_1 = Model(self.data, compressed_image, title=self.compressed_name)
+                model_list.append(model_1.return_difference())
+            except:
+                return("The H-Compression Failed...")
+
+            try:
+                self.compress(algorithm='RICE_1')
+                compressed_image = fits.getdata(self.compressed_name)
+                model_1 = Model(self.data, compressed_image, title=self.compressed_name)
+                model_list.append(model_2.return_difference())
+            except:
+                return("The RICE Compression Failed...")
+
+            try:
+                self.compress(algorithm='PLIO_1')
+                compressed_image = fits.getdata(self.compressed_name)
+                model_3 = Model(self.data, compressed_image, title=self.compressed_name)
+                model_list.append(model_3.return_difference())
+            except:
+                return("The PLIO Compression Failed...")
+
+            try:
+                self.compress(algorithm='GZIP_1')
+                compressed_image = fits.getdata(self.compressed_name)
+                model_4 = Model(self.data, compressed_image, title=self.compressed_name)
+                model_list.append(model_4.return_difference())
+            except:
+                return("The GZIP Compression Failed...")
+
+
+            # Compare statistics and compression factor.
+
+
+
+
