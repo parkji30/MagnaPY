@@ -10,6 +10,7 @@ data during the flight is crucial to evaluate payload performance, and debug any
 The use of compression algorithms proves to be an effective solution in increasing the rate at which data can
 be down-linked, while ensuring the down-linked data have sufficient quality for science analysis.
 
-<h1>Balco</h1> is an efficient compression optimizer software that will find the most optimal compression factor to image quality ratio for a given image.
+<h1>Balco</h1> 
+Balco is an efficient compression optimizer software that will find the most optimal compression factor to image quality ratio for a given image.
 
 So far, Balco is able to compression JPEGS, PNGS, and FITS images.
