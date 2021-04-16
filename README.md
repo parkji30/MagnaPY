@@ -22,3 +22,9 @@ So far, Balco is able to compress JPEGS, PNGS, and FITS images.
 <br> 2) Matplotlib
 <br> 3) Astropy
 <br> 4) pickle
+
+
+<h1>Installing</h1>
+
+
+<h1>Simple Example</h1>
