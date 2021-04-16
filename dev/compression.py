@@ -80,7 +80,7 @@ class Compression:
         @rtype: None
         """
         model_list = []
-        if self.check_extension():
+        if self.valid_extension():
             try:
                 self.compress(algorithm='HCOMPRESS_1')
                 compressed_image = fits.getdata(self.compressed_name)
@@ -92,7 +92,7 @@ class Compression:
             try:
                 self.compress(algorithm='RICE_1')
                 compressed_image = fits.getdata(self.compressed_name)
-                model_1 = Model(self.data, compressed_image, title=self.compressed_name)
+                model_2 = Model(self.data, compressed_image, title=self.compressed_name)
                 model_list.append(model_2.return_difference())
             except:
                 return("The RICE Compression Failed...")
@@ -112,9 +112,6 @@ class Compression:
                 model_list.append(model_4.return_difference())
             except:
                 return("The GZIP Compression Failed...")
-
-
-            # Compare statistics and compression factor.
 
 
 
