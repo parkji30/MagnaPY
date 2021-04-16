@@ -7,8 +7,21 @@ from Compression import Compression
 from Model import Model
 from astropy.io import fits
 
+
 original_images = './images/'
 comp_images = './comp_images/'
+
+# c_list = ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
+# try:
+#     algorithm = sys.argv[-2]
+#     q_factor = float(sys.argv[-1])
+# except:
+#     print("Something went wrong...")
+#     exit()
+
+# if not algorithm in c_list:
+#     print("Could not comprehend command, system exiting...")
+#     exit()
 
 original_image = fits.open('/Users/a16472/Desktop/temp_balco/original_images/L1M10_0.fits')[0].data
 

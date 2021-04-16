@@ -19,6 +19,9 @@ class Model:
         @type image_structure: ImageStructure Object
                 As defined in the code within the file.
         """
+        self.original_images = []
+        self.compressed_images = []
+        
         self.data = data
         self.compressed_data = compressed_data
         self.title = title

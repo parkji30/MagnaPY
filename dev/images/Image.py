@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class Image:
-    def __init__(self, data, compressed_data=0, image_name, compressed_image_name, info):
+    def __init__(self, data, compressed_data, image_name, compressed_image_name, info):
         """
         @type self: Image
         
@@ -33,7 +33,7 @@ class Image:
         @rtype: Numpy Array(2d) 
             Image represented by its 2D pixel values
         """
-        return self.data - np.median(self.data)
+        return self.data_modified = self.data - np.mean(self.data)
 
     def flat_field_reduction(self):
         """
@@ -61,13 +61,30 @@ class Image:
         else:
             return [np.mean(compressed), np.median(compressed), np.std(compressed)]
 
-    def update_compressed_name(self, name):
+    def get_name(self, version):
         """
-        Updates the compressed image name and stores in into the variable.
+        Returns the image name of the desired version.
 
         @type self: Image
         @type name: String
             Name of the compressed image file.
         @rtype: None
         """
-        self.compressed_image_name = name
+        if version.lower() == 'original':
+            return self.image_name
+        elif version.lower() == 'compressed':
+            return self.compressed_image_name
+
+    def get_data(self, version):
+        """
+        """
+        if version.lower() == 'original':
+            return self.data
+        elif version.lower() == 'compressed':
+            return self.compressed_data
+
+    def save_image(self, directory):
+        """
+        Saves the image in a specified directory.
+        """
+        
