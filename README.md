@@ -15,3 +15,16 @@ Balco is an efficient compression optimizer software that will find the most opt
 
 
 So far, Balco is able to compress JPEGS, PNGS, and FITS images.
+
+
+<h1>Python Dependencies</h1>
+     1) Numpy
+<br> 2) Matplotlib
+<br> 3) Astropy
+<br> 4) pickle
+
+
+<h1>Installing</h1>
+
+
+<h1>Simple Example</h1>
