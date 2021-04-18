@@ -13,103 +13,15 @@ class Model:
         (2) Power Spectrum Analysis
         (3) Image Reduction
     """
-    def __init__(self, data, compressed_data, title=''):
+    def __init__(self, image_name):
         """
         @type self: Model
         @type image_structure: ImageStructure Object
                 As defined in the code within the file.
         """
-        self.original_images = []
+        self.original_image_name = image_name
         self.compressed_images = []
         
-        self.data = data
-        self.compressed_data = compressed_data
-        self.title = title
-
-    def Im_show(self, version="original"):
-        """
-        Displays the original Image
-
-        @type self: Model
-        """
-        
-        plt.figure(figsize=(7, 7))
-        if version.lower() == "original":
-            plt.title("Original " + self.title)
-            plt.imshow(self.data)
-        elif version.lower() == 'compressed':
-            plt.title("Compressed " + self.title)
-            plt.imshow(self.compressed_data)
-        elif version.lower() == 'difference':
-            plt.title("Residual " + self.title)
-            plt.imshow(self.data - self.compressed_data)
-        plt.colorbar()
-        plt.show()
-
-    def Im_show_psd_1D(self, version='original', freq_scale=1):
-        """
-        Displays the 1D power spectrum density of the given image.
-
-        @type self: Model
-        @rtype: None
-            Shows PSD figure of the image (1D).
-        """
-        original = self.data
-        compressed = self.compressed_data
-
-        # Assume 1D
-        try:
-            plt.figure(figsize=(7, 7))
-            plt.title("Power Spectral Density " + version)
-            if version.lower() == 'original':
-                freqs, psd = signal.welch(original)
-                plt.semilogx(freqs*freq_scale, psd)
-            elif version.lower() =='compressed':
-                freqs, psd = signal.welch(compressed)
-                plt.semilogx(freqs*freq_scale, psd)
-            elif version.lower() == 'difference':
-                freqs, psd = signal.welch(original - compressed)
-                plt.semilogx(freqs*freq_scale, psd)
-            plt.colorbar()
-            plt.xlabel("Frequency [Hz]")
-            plt.ylabel("Power [Units]")
-            plt.show()
-        except:
-            print("1D PSD failed... probably dimensional error. Your image has " + str(original.ndim) + " dimensions")
-    
-    def Im_show_psd_2D(self, version='original', freq_scale=1):
-        """
-        Displays the 2D power spectrum density of the given image.
-
-        @type self: Model
-        @rtype: None
-            Shows PSD figure of the image (2D).
-        """
-        original = self.data
-        compressed = self.compressed_data
-
-        # Assume 2D
-        try:
-            plt.figure(figsize=(7, 7))
-            plt.title("Power Spectral Density " + version)
-            if version.lower() == 'original':
-                fft = np.fft.fft2(original)
-                p2d = np.power(np.abs(fft) * freq_scale, 2) 
-                plt.imshow(np.fft.fftshift(np.log10(p2d)))
-            elif version.lower() =='compressed':
-                fft = np.fft.fft2(compressed)
-                p2d = np.power(np.abs(fft) * freq_scale, 2)
-                plt.imshow(np.fft.fftshift(np.log10(p2d)))
-            elif version.lower() == 'difference':
-                fft = np.fft.fft2(original-compressed)
-                p2d = np.power(np.abs(fft) * freq_scale, 2)
-                plt.imshow(np.fft.fftshift(np.log10(p2d)))
-            plt.colorbar()
-            plt.show()
-        except:
-            print("1D PSD failed... probably dimensional error. Your image has " + str(original.ndim) + " dimensions")
-            
-
     def print_statistics(self, version='original'):
         """
         Returns basic statistics about the compressed and original image.
@@ -130,18 +42,63 @@ class Model:
                     "\nMedian: "+ str(np.median(compressed)) +
                     "\nStandard Deviation: "+ str(np.std(compressed)) + '\n')
 
-    def return_difference(self):
+    def get_image_name(self):
         """
-        Returns the difference of the mean, median, standard deviation of the
-        original and compressed image.
+        Returns the name of the original image (not compressed)
 
         @type self: Model
-        @rtype:  Tuple[ mean, median, standard deviation ]
-            (Original - compressed)
+        @rtype: String
+            Name of original image.
         """
-        original = self.data
-        compressed = self.compressed_data
+        return "The Model is based of the Image: " + self.original_image_name
 
-        return (np.mean(original) - np.mean(compressed),
-                np.median(original) - np.median(compressed),
-                np.std(original) - np.std(compressed))
+    def current_compressed_images(self):
+        """
+
+        """
+        for i in range(len(self.compressed_images)):
+            print(str(i) + ') ' + self.compressed_images[i])
+        return self.compressed_images
+
+    def update_compressed_list(self, Image):
+        """
+        Updates the compressed list of image objects but appending a new 
+        compressed Image Object to the list of compressed images.
+
+        @type self: Model Object
+        @type Image: Image Object
+        @rtype: None
+        """
+        self.compressed_images.append(Image)
+
+    def get_compressed_list(self):
+        """
+        Returns a list of all compressed Image objects.
+
+        @type self: Model Object
+        @rtype: List[Images]
+            returns the list of all compressed Images that this Model is analysing.
+        """
+        return self.compressed_images
+
+    def run_analysis(self, cutoff=2):
+        """
+        Finds the optimally compressed image to compressed factor based off the list of images.
+
+        @type self: Model 
+            Model object used to run the analysis of the compressed images.
+        @type cutoff: Float
+            percentage value used to indicate residual cutoff.
+        @rtype: None
+        """
+        residual_values = {}
+        for compressed_image in self.compressed_images:
+            residual_values[compressed_image.get_name()] \
+                 = np.mean(np.abs(compressed_image.get_data(version='original') - compressed_image.get_data(version='compressed')))
+
+        # updated_residual_values = {}
+        # for value in residual_values:
+        #     if residual_values[value] > cutoff/10000:
+        #         updated_residual_values[value] = residual_values[value]
+
+        return residual_values

@@ -9,28 +9,36 @@ class Compression:
     The compression object class that determines what compression
     algorithm will be used.
     """
-
     def __init__(self, data, image_name):
         """
+        Initializes a new compression object from 4 differnt algorithms 
+        to choose from.
+
+        Valid algorithms to choose from are:
+            Compression List -> ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
+        All of which can be used by the optimize() and compress() methods.
+
+        @type data: Numpy Array (2D)
+            Pixel values of the image.
+        
+        @type image_name: String
+            Image name that will be compressed.
+
         @type self: Compression Object
-
-        @type image_structure: ImageStructure Object
-
-        Acceptable parameters of compression_type:
-            1) Hcomp
-            2) Gzip
-            3) Rice
-            4) BitShave
         """
-        self.data = data
+        self.original_data = data
         self.image_name = image_name
-        self.image_compressed_name = ''
-        self.save_directory = ''
-  
-    def get_compressed_name(self):
-        return self.image_compressed_name
+        self.save_directory = '../images'
 
     def update_save_directory(self, new_directory):
+        """
+        Updates the new save directory.
+        
+        @type self: Compression
+        @type new_directory: Strong
+            Pathing to the new directory for saving the compressed images.
+        @rtype: None
+        """
         self.save_directory = new_directory
 
     def valid_extension(self):
@@ -67,12 +75,12 @@ class Compression:
 
         if self.valid_extension():
             if algorithm =="HCOMPRESS_1":
-                fits.CompImageHDU(self.data, compression_type = algorithm, \
+                fits.CompImageHDU(self.original_data, compression_type = algorithm, \
                 hcomp_scale=quantize_factor).writeto(self.save_directory + compressed_name, overwrite=True)
                 self.image_compressed_name = compressed_name
                 print("Hcompress!")
             else:
-                fits.CompImageHDU(self.data, compression_type = algorithm, \
+                fits.CompImageHDU(self.original_data, compression_type = algorithm, \
                 quantize_level=quantize_factor).writeto(self.save_directory + compressed_name, overwrite=True)
                 self.image_compressed_name = compressed_name
                 print(algorithm + " Compress!")
@@ -96,15 +104,24 @@ class Compression:
         """
         factors = np.linspace(compression_range[0], compression_range[1], iterations)
         if self.valid_extension():
-            try:
-                for factor in factors:
-                    self.compress(algorithm=algorithm, quantize_factor=factor)
-                
-                #Figure out a way to get a list of all the compressed images.
-
-                # Have the model run it's analysis for its images...
-                Model.run_analysis(images)
-            except:
-                return("The H-Compression Failed...")
+            # try:
+            for factor in factors:
+                self.compress(algorithm=algorithm, quantize_factor=factor)
+            
+            #Figure out a way to get a list of all the compressed images.
+            compressed_images = (os.listdir(self.save_directory))
+            model = Model(image_name = self.image_name)
+            for comp_image in compressed_images:
+                compressed_image_data = fits.getdata(self.save_directory + comp_image)
+                model.update_compressed_list(Image(data = self.original_data,
+                                                    compressed_data = compressed_image_data,
+                                                    image_name = self.image_name,
+                                                    comp_image_name = comp_image))
+            # Have the model run it's analysis for its images...
+            options = model.run_analysis()
+            # print(options)
+            # finalize = input("Enter option preferral!")
+            # except:
+            #     return("The H-Compression Failed...")
 
 

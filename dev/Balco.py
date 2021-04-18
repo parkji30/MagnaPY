@@ -32,12 +32,12 @@ compressor = Compression(data=original_image, image_name="L1M10.fits")
 compressor.update_save_directory("/Users/a16472/desktop/temp_balco/comp_images/")
 
 compressor.optimize(algorithm="HCOMPRESS_1", compression_range=(0, 10), iterations=20)
-compressed_image = fits.getdata(compressor.save_directory + compressor.get_compressed_name())
 
+# compressed_image = fits.getdata(compressor.save_directory + compressor.get_compressed_name())
 ## Model
-model = Model(original_image, compressed_image, title="L1M10_0")
+# model = Model(original_image, compressed_image, title="L1M10_0")
 
-model.Im_show(version='original')
-model.Im_show(version='compressed')
+# model.Im_show(version='original')
+# model.Im_show(version='compressed')
 # model.Im_show(version='compressed')
 # model.Im_show(version="difference")

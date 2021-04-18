@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 
 class Image:
     def __init__(self, data, compressed_data, image_name, compressed_image_name, info):
@@ -33,7 +34,7 @@ class Image:
         @rtype: Numpy Array(2d) 
             Image represented by its 2D pixel values
         """
-        return self.data_modified = self.data - np.mean(self.data)
+        self.data_modified = self.data - np.mean(self.data)
 
     def flat_field_reduction(self):
         """
@@ -87,4 +88,4 @@ class Image:
         """
         Saves the image in a specified directory.
         """
-        
+        pass
