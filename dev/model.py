@@ -62,9 +62,19 @@ class Model:
         """
         return self.compressed_images
 
+    def get_compressed_factors(self):
+        """
+        Returns a list of the compression factors of the images.
+
+        @type self: Model Object
+        @rtype: List[Floats]
+            returns the list of all compression factors.
+        """
+        return [img.get_compressed_factor() for img in self.compressed_images]
+
     def run_analysis(self, cutoff = 0.5):
         """
-        Finds the optimal image quality to compression factor based off the list of images.
+        Investigates the quality of the image based off the compression factor.
 
         @type self: Model 
             Model object used to run the analysis of the compressed images.
@@ -85,10 +95,15 @@ class Model:
             # To do
             # Show where the code failed.
 
-        # Return regions where difference are more than a certain percentage higher but still
+        # Also to look at. Regions where maximal difference is lower than the cutoff, but 
+        # investigate overall difference around the image.
+
+        # Return regions where differences are more than a certain percentage higher but still
         # lower than the cutoff.          
         # Code ---->
         # To do....
+
+        # Look into the PSD of the images.
 
         return updated_percentile_value
 

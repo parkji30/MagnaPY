@@ -9,7 +9,7 @@ class Compression:
     The compression object class that determines what compression
     algorithm will be used.
     """
-    def __init__(self, data, image_name):
+    def __init__(self, data, image_name, file_size):
         """
         Initializes a new compression object from 4 differnt algorithms 
         to choose from.
@@ -28,6 +28,8 @@ class Compression:
         """
         self.original_data = data
         self.image_name = image_name
+        self.original_size = file_size
+
         self.compressed_directory = []
         self.save_directory = '../images'
 
@@ -115,15 +117,18 @@ class Compression:
             self.compressed_directory = compressed_images
             model = Model(image_name = self.image_name, compression_factors = factors)
             for comp_image in self.compressed_directory:
+                comp_file_size = os.path.getsize(self.save_directory + comp_image)
                 compressed_image_data = fits.getdata(self.save_directory + comp_image)
                 model.update_compressed_list(Image(data = self.original_data,
                                                     compressed_data = compressed_image_data,
                                                     image_name = self.image_name,
-                                                    comp_image_name = comp_image))
+                                                    comp_image_name = comp_image,
+                                                    cfactor= self.original_size/comp_file_size))
             # Have the model run it's analysis for its images...
             options = model.run_analysis()
             model.show_residual_vs_compression_factor()
             model.show_residual_PSD_vs_compression_factor()
+            print(model.get_compressed_factors())
             # print(options)
             # finalize = input("Enter option preferral!")
             # except:

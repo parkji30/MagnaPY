@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy import signal
 
 class Image:
-    def __init__(self, data, compressed_data, image_name, comp_image_name, info=''):
+    def __init__(self, data, compressed_data, image_name, comp_image_name, cfactor=0, info=''):
         """
         @type self: Image
         
@@ -25,6 +25,8 @@ class Image:
         self.original_data = data
         self.data_modified = np.copy(self.original_data)
         self.compressed_data = compressed_data
+
+        self.compressed_factor = cfactor
 
         fft = np.fft.fft2(data)
         comp_fft = np.fft.fft2(compressed_data)
@@ -60,6 +62,14 @@ class Image:
             Image represented by its 2D pixel values
         """
         pass
+    
+    def get_compressed_factor(self):
+        """
+        Returns the compressed factor.
+
+        @type self:Image
+        """
+        return self.compressed_factor
 
     def get_mms(self, version='original'):
         """
