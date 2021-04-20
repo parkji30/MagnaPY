@@ -14,8 +14,7 @@ be down-linked, while ensuring the down-linked data have sufficient quality for 
 
 <h1> Balco </h1> 
 Balco is an efficient compression optimizer software that will find the most optimal compression factor to image quality ratio for a given image.
-
-
+<br>
 So far, Balco is able to compress JPEGS, PNGS, and FITS images.
 
 
