@@ -26,6 +26,12 @@ class Image:
         self.data_modified = np.copy(self.original_data)
         self.compressed_data = compressed_data
 
+        fft = np.fft.fft2(data)
+        comp_fft = np.fft.fft2(compressed_data)
+
+        self.original_psd = np.power(np.abs(fft), 2)
+        self.compressed_psd = np.power(np.abs(comp_fft), 2)
+
         self.image_name = image_name
         self.comp_image_name = comp_image_name
         self.info = info
@@ -97,6 +103,24 @@ class Image:
             return self.original_data
         elif version.lower() == 'compressed':
             return self.compressed_data
+        elif version.lower() == 'residual':
+            return self.original_data - self.compressed_data
+
+    def get_psd_data(self, version):
+        """
+        Returns the image PSD data of the desired version.
+
+        @type self: Image
+        @type version: String
+            Version of the image data to be returned.
+        @rtype: None
+        """
+        if version.lower() == 'original':
+            return self.original_psd
+        elif version.lower() == 'compressed':
+            return self.compressed_psd
+        elif version.lower() == 'residual':
+            return self.original_psd - self.compressed_psd
 
     def save_image(self, directory):
         """
@@ -112,9 +136,9 @@ class Image:
         """
         Displays the image. 3 Options to choose from.
 
-            1) original
-            2) compressed
-            3) difference
+            1) Original
+            2) Compressed
+            3) Difference
 
         @type self: Model
         @rtype: None
@@ -126,9 +150,10 @@ class Image:
         elif version.lower() == 'compressed':
             plt.title("Compressed " + self.image_name)
             plt.imshow(self.compressed_data)
-        elif version.lower() == 'difference':
-            plt.title("Residual " + self.image_name)
-            plt.imshow(self.original_data - self.compressed_data)
+        elif version.lower() == 'residual':
+            plt.title("Residual (Max & Min Value) " + self.image_name)
+            plt.imshow(np.max(self.original_data) - np.max(self.compressed_data), label='Max Value Residual')
+            plt.imshow(np.min(self.original_data) - np.min(self.compressed_data), label='Min Value Residual')
         plt.colorbar()
         plt.show()
 
@@ -153,7 +178,7 @@ class Image:
             elif version.lower() =='compressed':
                 freqs, psd = signal.welch(compressed)
                 plt.semilogx(freqs * freq_scale, psd)
-            elif version.lower() == 'difference':
+            elif version.lower() == 'residual':
                 freqs, psd = signal.welch(original - compressed)
                 plt.semilogx(freqs * freq_scale, psd)
             plt.colorbar()
@@ -186,7 +211,7 @@ class Image:
                 fft = np.fft.fft2(compressed)
                 p2d = np.power(np.abs(fft) * freq_scale, 2)
                 plt.imshow(np.fft.fftshift(np.log10(p2d)))
-            elif version.lower() == 'difference':
+            elif version.lower() == 'residual':
                 fft = np.fft.fft2(original-compressed)
                 p2d = np.power(np.abs(fft) * freq_scale, 2)
                 plt.imshow(np.fft.fftshift(np.log10(p2d)))

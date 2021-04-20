@@ -28,6 +28,7 @@ class Compression:
         """
         self.original_data = data
         self.image_name = image_name
+        self.compressed_directory = []
         self.save_directory = '../images'
 
     def update_save_directory(self, new_directory):
@@ -65,7 +66,7 @@ class Compression:
         into a fits file.
 
         @type self: Compression
-            Compression List ----> ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
+            Compression List ---> ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
         @type factor: Integer
             desired compression factor, particularily used with
             HCompression or used as a quantization factor.
@@ -109,9 +110,11 @@ class Compression:
                 self.compress(algorithm=algorithm, quantize_factor=factor)
             
             #Figure out a way to get a list of all the compressed images.
-            compressed_images = (os.listdir(self.save_directory))
-            model = Model(image_name = self.image_name)
-            for comp_image in compressed_images:
+            compressed_images = os.listdir(self.save_directory)
+            compressed_images.sort()
+            self.compressed_directory = compressed_images
+            model = Model(image_name = self.image_name, compression_factors = factors)
+            for comp_image in self.compressed_directory:
                 compressed_image_data = fits.getdata(self.save_directory + comp_image)
                 model.update_compressed_list(Image(data = self.original_data,
                                                     compressed_data = compressed_image_data,
@@ -119,6 +122,8 @@ class Compression:
                                                     comp_image_name = comp_image))
             # Have the model run it's analysis for its images...
             options = model.run_analysis()
+            model.show_residual_vs_compression_factor()
+            model.show_residual_PSD_vs_compression_factor()
             # print(options)
             # finalize = input("Enter option preferral!")
             # except:

@@ -13,7 +13,7 @@ class Model:
         (2) Power Spectrum Analysis
         (3) Image Reduction
     """
-    def __init__(self, image_name):
+    def __init__(self, image_name, compression_factors):
         """
         @type self: Model
         @type image_structure: ImageStructure Object
@@ -21,26 +21,7 @@ class Model:
         """
         self.original_image_name = image_name
         self.compressed_images = []
-        
-    def print_statistics(self, version='original'):
-        """
-        Returns basic statistics about the compressed and original image.
-        """
-        original = self.data
-        compressed = self.compressed_data
-
-        if version.lower()=='original':
-            print("\nOriginal Image" + \
-                    "\n----------------------" + \
-                    "\nMean: "+ str(np.mean(original)) + \
-                    "\nMedian: "+ str(np.median(original)) + \
-                    "\nStandard Deviation: " + str(np.std(original)) + '\n')
-        else:
-            print("\nCompressed Image" + \
-                    "\n----------------------" + \
-                    "\nMean: "+ str(np.mean(compressed)) +
-                    "\nMedian: "+ str(np.median(compressed)) +
-                    "\nStandard Deviation: "+ str(np.std(compressed)) + '\n')
+        self.compression_factors = compression_factors
 
     def get_image_name(self):
         """
@@ -81,9 +62,9 @@ class Model:
         """
         return self.compressed_images
 
-    def run_analysis(self, cutoff=2):
+    def run_analysis(self, cutoff = 0.5):
         """
-        Finds the optimally compressed image to compressed factor based off the list of images.
+        Finds the optimal image quality to compression factor based off the list of images.
 
         @type self: Model 
             Model object used to run the analysis of the compressed images.
@@ -91,14 +72,68 @@ class Model:
             percentage value used to indicate residual cutoff.
         @rtype: None
         """
-        residual_values = {}
+        percentile_difference = {}
         for compressed_image in self.compressed_images:
-            residual_values[compressed_image.get_name()] \
-                 = np.mean(np.abs(compressed_image.get_data(version='original') - compressed_image.get_data(version='compressed')))
+            percentile_difference[compressed_image.get_name(version='compressed')] \
+                = compressed_image.get_data(version='original') - compressed_image.get_data(version='compressed')
+        
+        updated_percentile_value = {}
+        for percentile in percentile_difference:
+            if np.all(np.abs(percentile_difference[percentile]) < cutoff):
+                updated_percentile_value[percentile] = percentile_difference[percentile]
+                print("Passes the Threshold!")
+            # To do
+            # Show where the code failed.
 
-        # updated_residual_values = {}
-        # for value in residual_values:
-        #     if residual_values[value] > cutoff/10000:
-        #         updated_residual_values[value] = residual_values[value]
+        # Return regions where difference are more than a certain percentage higher but still
+        # lower than the cutoff.          
+        # Code ---->
+        # To do....
 
-        return residual_values
+        return updated_percentile_value
+
+    def show_residual_vs_compression_factor(self):
+        """
+        Shows the relationship between the residual of the images vs.
+        it's compression factor.
+
+        @type self: Model
+        @rtype: None
+            Displays an interactive Matplotlib figure.
+        """
+        max_residuals = [np.max(np.abs(image.get_data(version='residual'))) for image in self.compressed_images]
+        min_residuals = [np.min(np.abs(image.get_data(version='residual'))) for image in self.compressed_images]
+        factors = self.compression_factors
+        
+        plt.figure(figsize=(9, 6))
+        plt.title("Residual (Max & Min Values) vs. Compression Factor")
+        plt.plot(factors, max_residuals, label="Max", linestyle="None", marker='.')
+        plt.plot(factors, min_residuals, label='Min', linestyle="None", marker='+')
+        plt.xlabel("Compression Factor")
+        plt.ylabel("Residual")
+        plt.legend()
+        plt.show()
+
+    def show_residual_PSD_vs_compression_factor(self):
+        """
+        Shows the relationship between the residual (PSD) of the images vs.
+        it's compression factor.
+
+        @type self: Model
+        @rtype: None
+            Displays an interactive Matplotlib figure.
+        """
+        max_residuals = [np.max(np.abs(image.get_psd_data(version='residual'))) for image in self.compressed_images]
+        min_residuals = [np.min(np.abs(image.get_psd_data(version='residual'))) for image in self.compressed_images]
+        factors = self.compression_factors
+
+        plt.figure(figsize=(9, 6))
+        plt.title("PSD Residual (Max & Min values) vs. Compression Factor")
+        plt.plot(factors, max_residuals, label="Max", linestyle="None", marker='x')
+        plt.plot(factors, min_residuals, label='Min', linestyle="None", marker='+')
+        plt.xlabel("Compression Factor")
+        plt.ylabel("Frequency [Hz]")
+        plt.legend()
+        plt.show()
+
+   
