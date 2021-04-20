@@ -1,3 +1,5 @@
+<h1> Motivation </h1>
+
 Balloon-borne telescopes have grown tremendously in their capabilities for capturing high quality science
 data. However, there is a challenge associated with these advancements: the limited down-link bandwidth
 available to most balloon payloads to transmit science data. 
@@ -10,7 +12,7 @@ data during the flight is crucial to evaluate payload performance, and debug any
 The use of compression algorithms proves to be an effective solution in increasing the rate at which data can
 be down-linked, while ensuring the down-linked data have sufficient quality for science analysis.
 
-<h1>Balco</h1> 
+<h1> Balco </h1> 
 Balco is an efficient compression optimizer software that will find the most optimal compression factor to image quality ratio for a given image.
 
 
