@@ -26,7 +26,7 @@ class Image:
         self.data_modified = np.copy(self.original_data)
         self.compressed_data = compressed_data
 
-        self.compressed_factor = cfactor
+        self.compressed_factor = round(cfactor, 4)
 
         fft = np.fft.fft2(data)
         comp_fft = np.fft.fft2(compressed_data)
@@ -37,6 +37,16 @@ class Image:
         self.image_name = image_name
         self.comp_image_name = comp_image_name
         self.info = info
+    
+    def __repr__(self):
+        """
+        """
+        return self.get_name(version="compressed")
+
+    def __str__(self):
+        """
+        """
+        return self.get_name(version="compressed")
 
     def median_reduction(self):
         """

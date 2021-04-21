@@ -13,7 +13,7 @@ class Model:
         (2) Power Spectrum Analysis
         (3) Image Reduction
     """
-    def __init__(self, image_name, compression_factors):
+    def __init__(self, image_name, quantization_numbers):
         """
         @type self: Model
         @type image_structure: ImageStructure Object
@@ -21,7 +21,7 @@ class Model:
         """
         self.original_image_name = image_name
         self.compressed_images = []
-        self.compression_factors = compression_factors
+        self.quantization_numbers = quantization_numbers
 
     def get_image_name(self):
         """
@@ -72,7 +72,17 @@ class Model:
         """
         return [img.get_compressed_factor() for img in self.compressed_images]
 
-    def run_analysis(self, cutoff = 0.5):
+    def get_quantization_numbers(self):
+        """
+        Returns a list of the compression factors of the images.
+
+        @type self: Model Object
+        @rtype: List[Floats]
+            returns the list of all compression factors.
+        """
+        return self.quantization_numbers
+
+    def run_analysis(self, cutoff=0.05, cfactor=2):
         """
         Investigates the quality of the image based off the compression factor.
 
@@ -82,30 +92,30 @@ class Model:
             percentage value used to indicate residual cutoff.
         @rtype: None
         """
-        percentile_difference = {}
+        valid_cfactors = {}
         for compressed_image in self.compressed_images:
-            percentile_difference[compressed_image.get_name(version='compressed')] \
-                = compressed_image.get_data(version='original') - compressed_image.get_data(version='compressed')
+            if np.all(np.abs(compressed_image.get_data(version='residual')) < cutoff) \
+                and compressed_image.get_compressed_factor() >= cfactor:
+                valid_cfactors[compressed_image] = compressed_image.get_compressed_factor()
+
+        print("Balco has found a total of", str(len(valid_cfactors)), "acceptable images.")
         
-        updated_percentile_value = {}
-        for percentile in percentile_difference:
-            if np.all(np.abs(percentile_difference[percentile]) < cutoff):
-                updated_percentile_value[percentile] = percentile_difference[percentile]
-                print("Passes the Threshold!")
-            # To do
-            # Show where the code failed.
+        number = 1
+        for image in valid_cfactors:
+            print(str(number) + ") " + image.get_name(version='compressed') + ": " + str(valid_cfactors[image]))
+            number += 1
+
+        print("\n Read this as:")
+        print(" Algorithm -- Quantization Number -- Image Name: Compression Factor ")
 
         # Also to look at. Regions where maximal difference is lower than the cutoff, but 
         # investigate overall difference around the image.
-
         # Return regions where differences are more than a certain percentage higher but still
         # lower than the cutoff.          
         # Code ---->
         # To do....
-
         # Look into the PSD of the images.
-
-        return updated_percentile_value
+        return valid_cfactors
 
     def show_residual_vs_compression_factor(self):
         """
@@ -118,13 +128,35 @@ class Model:
         """
         max_residuals = [np.max(np.abs(image.get_data(version='residual'))) for image in self.compressed_images]
         min_residuals = [np.min(np.abs(image.get_data(version='residual'))) for image in self.compressed_images]
-        factors = self.compression_factors
+        factors = self.get_compressed_factors()
         
         plt.figure(figsize=(9, 6))
         plt.title("Residual (Max & Min Values) vs. Compression Factor")
         plt.plot(factors, max_residuals, label="Max", linestyle="None", marker='.')
         plt.plot(factors, min_residuals, label='Min', linestyle="None", marker='+')
         plt.xlabel("Compression Factor")
+        plt.ylabel("Residual")
+        plt.legend()
+        plt.show()
+
+    def show_residual_vs_quantization_number(self):
+        """
+        Shows the relationship between the residual of the images vs.
+        the quantization number used.
+
+        @type self: Model
+        @rtype: None
+            Displays an interactive Matplotlib figure.
+        """
+        max_residuals = [np.max(np.abs(image.get_data(version='residual'))) for image in self.compressed_images]
+        min_residuals = [np.min(np.abs(image.get_data(version='residual'))) for image in self.compressed_images]
+        factors = self.get_quantization_numbers()
+        
+        plt.figure(figsize=(9, 6))
+        plt.title("Residual (Max & Min Values) vs. Quantization Number")
+        plt.plot(factors, max_residuals, label="Max", linestyle="None", marker='.')
+        plt.plot(factors, min_residuals, label='Min', linestyle="None", marker='+')
+        plt.xlabel("Quantization Number")
         plt.ylabel("Residual")
         plt.legend()
         plt.show()
@@ -140,7 +172,7 @@ class Model:
         """
         max_residuals = [np.max(np.abs(image.get_psd_data(version='residual'))) for image in self.compressed_images]
         min_residuals = [np.min(np.abs(image.get_psd_data(version='residual'))) for image in self.compressed_images]
-        factors = self.compression_factors
+        factors = self.get_compressed_factors()
 
         plt.figure(figsize=(9, 6))
         plt.title("PSD Residual (Max & Min values) vs. Compression Factor")
@@ -150,5 +182,3 @@ class Model:
         plt.ylabel("Frequency [Hz]")
         plt.legend()
         plt.show()
-
-   

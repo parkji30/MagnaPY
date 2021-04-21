@@ -2,7 +2,7 @@ from astropy.io import fits
 import numpy as np
 from Model import Model
 from Image import Image
-import os
+import os, shutil
 
 class Compression:
     """
@@ -31,7 +31,7 @@ class Compression:
         self.original_size = file_size
 
         self.compressed_directory = []
-        self.save_directory = '../images'
+        self.save_directory = '../comp_images'
 
     def update_save_directory(self, new_directory):
         """
@@ -44,6 +44,24 @@ class Compression:
         """
         self.save_directory = new_directory
 
+    def clean_save_directory(self):
+        """
+        Empties the save directory.
+
+        @type self: Compression
+        @rtype: None
+        """
+        folder = self.save_directory
+        for filename in os.listdir(folder):
+            file_path = os.path.join(folder, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+    
     def valid_extension(self):
         """
         Checks to see if the image extension is compressible with current
@@ -74,19 +92,17 @@ class Compression:
             HCompression or used as a quantization factor.
         @rtype: None
         """
-        compressed_name = algorithm + "_" + str(quantize_factor) +  "_" + self.image_name
+        compressed_name = algorithm + "_" + str(round(quantize_factor, 3)) +  "_" + self.image_name
 
         if self.valid_extension():
             if algorithm =="HCOMPRESS_1":
-                fits.CompImageHDU(self.original_data, compression_type = algorithm, \
+                fits.CompImageHDU(self.original_data, compression_type=algorithm, \
                 hcomp_scale=quantize_factor).writeto(self.save_directory + compressed_name, overwrite=True)
                 self.image_compressed_name = compressed_name
-                print("Hcompress!")
             else:
                 fits.CompImageHDU(self.original_data, compression_type = algorithm, \
                 quantize_level=quantize_factor).writeto(self.save_directory + compressed_name, overwrite=True)
                 self.image_compressed_name = compressed_name
-                print(algorithm + " Compress!")
 
     def optimize(self, algorithm='HCOMPRESS_1', compression_range=(1, 2), iterations=4):
         """
@@ -107,7 +123,6 @@ class Compression:
         """
         factors = np.linspace(compression_range[0], compression_range[1], iterations)
         if self.valid_extension():
-            # try:
             for factor in factors:
                 self.compress(algorithm=algorithm, quantize_factor=factor)
             
@@ -115,7 +130,8 @@ class Compression:
             compressed_images = os.listdir(self.save_directory)
             compressed_images.sort()
             self.compressed_directory = compressed_images
-            model = Model(image_name = self.image_name, compression_factors = factors)
+            model = Model(image_name = self.image_name, quantization_numbers=factors)
+
             for comp_image in self.compressed_directory:
                 comp_file_size = os.path.getsize(self.save_directory + comp_image)
                 compressed_image_data = fits.getdata(self.save_directory + comp_image)
@@ -123,15 +139,17 @@ class Compression:
                                                     compressed_data = compressed_image_data,
                                                     image_name = self.image_name,
                                                     comp_image_name = comp_image,
-                                                    cfactor= self.original_size/comp_file_size))
-            # Have the model run it's analysis for its images...
-            options = model.run_analysis()
+                                                    cfactor = self.original_size/comp_file_size))
+
+            # Have the model run it's analysis for its compressed images...
+            compression_images = model.run_analysis()
+
             model.show_residual_vs_compression_factor()
             model.show_residual_PSD_vs_compression_factor()
-            print(model.get_compressed_factors())
-            # print(options)
-            # finalize = input("Enter option preferral!")
-            # except:
-            #     return("The H-Compression Failed...")
-
-
+            model.show_residual_vs_quantization_number()
+            
+            finalize = int(input("Enter option number: "))
+            selected_image = compression_images[finalize]
+            
+            print("Your selected image is: ", selected_image)
+            

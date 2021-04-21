@@ -37,11 +37,12 @@ original_image = fits.open('/Users/a16472/Desktop/temp_balco/original_images/L1M
 file_size = os.path.getsize('/Users/a16472/Desktop/temp_balco/original_images/L1M10_0.fits')
 ## Compress
 # Compression List -> ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
-algorithm = 'RICE_1'
+# algorithm = 'RICE_1'
+
 compressor = Compression(data=original_image, image_name="L1M10.fits", file_size=file_size)
 compressor.update_save_directory("/Users/a16472/desktop/temp_balco/comp_images/")
 # compressor.compress(algorithm='RICE_1')
-compressor.optimize(algorithm="HCOMPRESS_1", compression_range=(0, 100), iterations=20)
+compressor.optimize(algorithm="HCOMPRESS_1", compression_range=(0, 100), iterations=200)
 
 ## Model
 # model = Model(original_image, compressed_image, title="L1M10_0")
