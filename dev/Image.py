@@ -121,7 +121,7 @@ class Image:
             return [np.mean(original), np.median(original), np.std(original)]
         elif version.lower()=='compressed':
             return [np.mean(compressed), np.median(compressed), np.std(compressed)]
-        elif version.lower()=='residual'
+        elif version.lower()=='residual':
             return [np.mean(original - compressed), \
                     np.median(original - compressed), \
                     np.std(original - compressed)]
