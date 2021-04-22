@@ -100,7 +100,7 @@ class Model:
                 valid_cfactors[compressed_image] = compressed_image.get_compressed_factor()
                 valid_images.append(compressed_image)
 
-        print("Balco has found a total of", str(len(valid_cfactors)), "acceptable images.")
+        print("Balco has found a total of", str(len(valid_cfactors)), "acceptable compressed images.")
         
         number = 1
         for image in valid_cfactors:

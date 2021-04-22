@@ -2,19 +2,25 @@ import os, shutil
 
 ## Delete the compression folder each time we run.
 ## Change this to where your balco is located.
-os.chdir("/Users/a16472/desktop/balco/dev/")
+
+balco_home = "/Users/a16472/Desktop/Balco/dev/"
 comp_folder = "/Users/a16472/Desktop/Balco/dev/comp_images/"
 og_folder = "/Users/a16472/Desktop/Balco/dev/images/"
 
-for filename in os.listdir(comp_folder):
-    file_path = os.path.join(comp_folder, filename)
-    try:
-        if os.path.isfile(file_path) or os.path.islink(file_path):
-            os.unlink(file_path)
-        elif os.path.isdir(file_path):
-            shutil.rmtree(file_path)
-    except Exception as e:
-        print('Failed to delete %s. Reason: %s' % (file_path, e))
+os.chdir(balco_home)
+
+def empty_folder(folder):
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+empty_folder(comp_folder)
 
 ## Load Packages
 from Compression import Compression
@@ -48,6 +54,12 @@ compressor.update_save_directory(comp_folder)
 # compressor.compress(algorithm='RICE_1')
 selected_image = compressor.optimize(algorithm="HCOMPRESS_1", compression_range=(0, 100), iterations=200)
 
-## Model
+## Model Analysis
 selected_image.Im_show()
 selected_image.Im_show(version="Compressed")
+
+## Empty the folder.
+empty_folder(comp_folder)
+
+## Save the image now.
+selected_image.save_image("/Users/a16472/Desktop/Balco/dev/")
