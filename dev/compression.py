@@ -145,11 +145,13 @@ class Compression:
             compression_images = model.run_analysis()
 
             model.show_residual_vs_compression_factor()
-            model.show_residual_PSD_vs_compression_factor()
+            model.show_residual_PSD_vs_compression_factor() 
             model.show_residual_vs_quantization_number()
             
-            finalize = int(input("Enter option number: "))
-            selected_image = compression_images[finalize]
-            
+            # finalize = int(input("Enter option number: "))
+            selected_image = compression_images[-1]
             print("Your selected image is: ", selected_image)
-            
+            print("The compression factor is: ", str(selected_image.get_compressed_factor()), '\n')
+
+            # Removes all other images, but the best version.
+            return selected_image

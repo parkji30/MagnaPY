@@ -1,10 +1,13 @@
 import os, shutil
 
 ## Delete the compression folder each time we run.
-os.chdir("/Users/a16472/desktop/temp_balco")
-folder = "/Users/a16472/desktop/temp_balco/comp_images"
-for filename in os.listdir(folder):
-    file_path = os.path.join(folder, filename)
+## Change this to where your balco is located.
+os.chdir("/Users/a16472/desktop/balco/dev/")
+comp_folder = "/Users/a16472/Desktop/Balco/dev/comp_images/"
+og_folder = "/Users/a16472/Desktop/Balco/dev/images/"
+
+for filename in os.listdir(comp_folder):
+    file_path = os.path.join(comp_folder, filename)
     try:
         if os.path.isfile(file_path) or os.path.islink(file_path):
             os.unlink(file_path)
@@ -33,16 +36,18 @@ comp_images = './comp_images/'
 #     print("Could not comprehend command, system exiting...")
 #     exit()
 
-original_image = fits.open('/Users/a16472/Desktop/temp_balco/original_images/L1M10_0.fits')[0].data
-file_size = os.path.getsize('/Users/a16472/Desktop/temp_balco/original_images/L1M10_0.fits')
+original_image = fits.open(og_folder + 'L1M10_0.fits')[0].data
+file_size = os.path.getsize(og_folder + 'L1M10_0.fits')
+
 ## Compress
 # Compression List -> ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
 # algorithm = 'RICE_1'
 
 compressor = Compression(data=original_image, image_name="L1M10.fits", file_size=file_size)
-compressor.update_save_directory("/Users/a16472/desktop/temp_balco/comp_images/")
+compressor.update_save_directory(comp_folder)
 # compressor.compress(algorithm='RICE_1')
-compressor.optimize(algorithm="HCOMPRESS_1", compression_range=(0, 100), iterations=200)
+selected_image = compressor.optimize(algorithm="HCOMPRESS_1", compression_range=(0, 100), iterations=200)
 
 ## Model
-# model = Model(original_image, compressed_image, title="L1M10_0")
+selected_image.Im_show()
+selected_image.Im_show(version="Compressed")

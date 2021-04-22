@@ -93,10 +93,12 @@ class Model:
         @rtype: None
         """
         valid_cfactors = {}
+        valid_images = []
         for compressed_image in self.compressed_images:
             if np.all(np.abs(compressed_image.get_data(version='residual')) < cutoff) \
                 and compressed_image.get_compressed_factor() >= cfactor:
                 valid_cfactors[compressed_image] = compressed_image.get_compressed_factor()
+                valid_images.append(compressed_image)
 
         print("Balco has found a total of", str(len(valid_cfactors)), "acceptable images.")
         
@@ -115,7 +117,7 @@ class Model:
         # Code ---->
         # To do....
         # Look into the PSD of the images.
-        return valid_cfactors
+        return valid_images
 
     def show_residual_vs_compression_factor(self):
         """
