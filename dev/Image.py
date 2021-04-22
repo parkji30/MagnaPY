@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
+from astropy.io import fits
 
 class Image:
     def __init__(self, data, compressed_data, image_name, comp_image_name, cfactor=0, info=''):
@@ -18,6 +19,10 @@ class Image:
 
         @type comp_image_name: String
             The name of the compressed image.
+
+        @type cfactor: Float
+            The compression factor of the compressed image from 
+            it's original image.
 
         @type info:
             Information of the image containing it's header.
@@ -40,11 +45,23 @@ class Image:
     
     def __repr__(self):
         """
+        Representation of this python object when called upon.
+
+        @type self: Balco
+        @rtype: String
+            When this object is called, it will be represented
+            by it's compressed name.
         """
         return self.get_name(version="compressed")
 
     def __str__(self):
         """
+        Representation of this python object when used as a string.
+
+        @type self: Balco
+        @rtype: String
+            When this object is used as a string, it will be
+            represented by it's compressed name.
         """
         return self.get_name(version="compressed")
 
@@ -75,9 +92,10 @@ class Image:
     
     def get_compressed_factor(self):
         """
-        Returns the compressed factor.
+        Returns the compression factor of the compressed Image.
 
-        @type self:Image
+        @type self: Float
+            Returns the compression factor 
         """
         return self.compressed_factor
 
@@ -86,24 +104,40 @@ class Image:
         Returns the mean, median, standard deviation of the input image.
 
         @type self: Model
-        @type original_view: Boolean (Display the original or compressed Image)
+
+        @type version: String
+            1) Original returns the original image. 
+            2) Compressed returns the compressed image.
+            3) Difference returns original subtracted by the compressed image.
+
+        @rtype: String
+            Returns the mean, median and standard deviation of the selected
+            version.
         """
         original = self.original_data
         compressed = self.compressed_data
 
         if version.lower()=='original':
             return [np.mean(original), np.median(original), np.std(original)]
-        else:
+        elif version.lower()=='compressed':
             return [np.mean(compressed), np.median(compressed), np.std(compressed)]
+        elif version.lower()=='residual'
+            return [np.mean(original - compressed), \
+                    np.median(original - compressed), \
+                    np.std(original - compressed)]
 
     def get_name(self, version='original'):
         """
-        Returns the image name of the desired version.
+        Returns the Image name of the desired version.
 
         @type self: Image
+        
         @type version: String
-            Version of the image name to be returned.
-        @rtype: None
+            1) Original displays the original image. 
+            2) Compressed displays the compressed image.
+
+        @rtype: String
+            Returns the name of the version of the image.
         """
         if version.lower() == 'original':
             return self.image_name
@@ -115,9 +149,14 @@ class Image:
         Returns the image data of the desired version.
 
         @type self: Image
+
         @type version: String
-            Version of the image data to be returned.
-        @rtype: None
+            1) Original obtains the original image. 
+            2) Compressed obtains the compressed image.
+            3) Difference obtains original subtracted by the compressed image.
+
+        @rtype: String
+            Returns the data of the selected version.
         """
         if version.lower() == 'original':
             return self.original_data
@@ -131,9 +170,14 @@ class Image:
         Returns the image PSD data of the desired version.
 
         @type self: Image
+
         @type version: String
-            Version of the image data to be returned.
-        @rtype: None
+            1) Original obtains the original image. 
+            2) Compressed obtains the compressed image.
+            3) Difference obtains original subtracted by the compressed image.
+
+        @rtype: String
+            Returns the data of the selected version.
         """
         if version.lower() == 'original':
             return self.original_psd
@@ -144,24 +188,31 @@ class Image:
 
     def save_image(self, directory):
         """
-        Saves the image in a specified directory.
+        Saves the compressed image in the specified directory.
 
         @type self: Image 
-        @type directory: String
-            New pathing to save this image object.
-        """
-        pass
 
+        @type directory: String
+            Directory to save this image.
+
+        @rtype: None
+            Saves this image to designated directory.
+        """
+        fits.writeto(directory + self.comp_image_name, self.compressed_data, overwrite=True)
+        
     def Im_show(self, version="original"):
         """
-        Displays the image. 3 Options to choose from.
-
-            1) Original
-            2) Compressed
-            3) Difference
+        Displays a matplotlib image.
 
         @type self: Model
+
+        @type version: String
+            1) Original obtains the original image. 
+            2) Compressed obtains the compressed image.
+            3) Difference obtains original subtracted by the compressed image.
+
         @rtype: None
+            Displays the version of the selected image as a matplotlib object.
         """
         plt.figure(figsize=(7, 7))
         if version.lower() == "original":
@@ -213,8 +264,17 @@ class Image:
         Displays the 2D power spectrum density of this image.
 
         @type self: Image
+
+        @type version: String
+            1) Original obtains the original image. 
+            2) Compressed obtains the compressed image.
+            3) Difference obtains original subtracted by the compressed image.
+
+        @type freq_scale: Float
+            Number to scale the frequency values by.
+
         @rtype: None
-            Shows PSD figure of the image (2D).
+            Displays the version of the selected image as a matplotlib object.
         """
         original = self.original_data
         compressed = self.compressed_data
@@ -239,5 +299,3 @@ class Image:
             plt.show()
         except:
             print("2D PSD failed... probably dimensional error. Your image has " + str(original.ndim) + " dimensions")
-
-   
