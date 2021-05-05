@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy import signal
 from astropy.io import fits
 
-class Array:
+class ArrayND:
     def __init__(self, data, compressed_data, image_name, comp_image_name, cfactor=0, info=''):
         """
         @type self: Image
@@ -220,3 +220,15 @@ class Array:
             plt.imshow(np.min(self.original_data) - np.min(self.compressed_data), label='Min Value Residual')
         plt.colorbar()
         plt.show()
+
+    def Im_show_psd(self):
+        """
+        Power Spectrum Analysis of array.
+
+        To be implemented in child classes.
+
+        @type self: Array
+        @rtype: None
+            Displays the PSD of the array.
+        """
+        pass

@@ -1,4 +1,6 @@
-class Array_2D(Array):
+from Array import ArrayND
+
+class Array2D(ArrayND):
     """
     Child class of the general Array class.
 
@@ -6,9 +8,9 @@ class Array_2D(Array):
     """
         
     def __init__(self, data, compressed_data, image_name, comp_image_name, cfactor=0, info=''):
-        Array.__init__(data, compressed_data, image_name, comp_image_name, cfactor, info)
+        super(Array2D, self).__init__(data, compressed_data, image_name, comp_image_name, cfactor, info)
 
-    def Im_show_psd_2D(self, version='original', freq_scale=1):
+    def Im_show_psd(self, version='original', freq_scale=1):
         """
         Displays the 2D power spectrum density of this image.
 

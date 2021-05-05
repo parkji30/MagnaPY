@@ -1,7 +1,9 @@
 from astropy.io import fits
 import numpy as np
 from Model import Model
-from Image import Image
+from Array_1D import Array1D
+from Array_2D import Array2D  
+from Array import ArrayND
 import os, shutil
 
 class Compression:
@@ -104,10 +106,61 @@ class Compression:
                 quantize_level=quantize_factor).writeto(self.save_directory + compressed_name, overwrite=True)
                 self.image_compressed_name = compressed_name
 
-    def optimize(self, algorithm='HCOMPRESS_1', compression_range=(1, 2), iterations=4):
+    def run_analysis_1D(self, algorithm='RICE_1'):
         """
-        Selects the most optimal compression algorithm to be used for given
-        science image.
+        Optimizer for 1 Dimension Array compression.
+
+        TODO- implement libpolycomp for fitting compression.
+
+        @type self: Compression
+        @type algorithm: String
+            The desired compression algorithm to be used.
+            Compression List ----> ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
+        @type compression_range: Tuple(Float, Float)
+            Range of compression factors from min to max 
+        @type iterations:
+            compression factor forward steps.
+        @rtype: None
+        """
+        if self.valid_extension():
+            self.compress(algorithm=algorithm)
+
+            #Figure out a way to get a list of all the compressed images.
+            compressed_images = os.listdir(self.save_directory)
+            compressed_images.sort()
+            self.compressed_directory = compressed_images
+            model = Model(image_name = self.image_name)
+            print(self.original_data)
+            for comp_image in self.compressed_directory:
+                comp_file_size = os.path.getsize(self.save_directory + comp_image)
+                compressed_image_data = fits.getdata(self.save_directory + comp_image)
+                model.update_compressed_list(Array1D(data=self.original_data,
+                                                    compressed_data = compressed_image_data,
+                                                    image_name = self.image_name,
+                                                    comp_image_name = comp_image,
+                                                    cfactor = self.original_size/comp_file_size))
+
+            # Have the model run it's analysis for its compressed images...
+            compression_images = model.run_analysis()
+
+            model.show_residual_vs_compression_factor()
+            # model.show_residual_PSD_vs_compression_factor() 
+            model.show_residual_vs_quantization_number()
+            
+            # finalize = int(input("Enter option number: "))
+            if len(compression_images) > 0:
+                selected_image = compression_images[-1]
+                print("Your selected image is: ", selected_image)
+                print("The compression factor is: ", str(selected_image.get_compressed_factor()), '\n')
+            else: 
+                print("No optimal compression factor could be found.")
+
+            # Removes all other images, but the best version.
+            return selected_image
+
+    def run_analysis_2D(self, algorithm='HCOMPRESS_1', compression_range=(0, 2), iterations=4):
+        """
+        Optimizer for 2 dimension array compression.
 
         TODO- implement libpolycomp for fitting compression.
 
@@ -135,7 +188,7 @@ class Compression:
             for comp_image in self.compressed_directory:
                 comp_file_size = os.path.getsize(self.save_directory + comp_image)
                 compressed_image_data = fits.getdata(self.save_directory + comp_image)
-                model.update_compressed_list(Image(data = self.original_data,
+                model.update_compressed_list(Array2D(data = self.original_data,
                                                     compressed_data = compressed_image_data,
                                                     image_name = self.image_name,
                                                     comp_image_name = comp_image,

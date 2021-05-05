@@ -1,9 +1,10 @@
-class Array_1D(Array):
-    
-    def __init__(self, data, compressed_data, image_name, comp_image_name, cfactor=0, info=''):
-        Array.__init__(data, compressed_data, image_name, comp_image_name, cfactor, info)
+from Array import ArrayND
 
-    def Im_show_psd_1D(self, version='original', freq_scale=1):
+class Array1D(ArrayND):
+    def __init__(self, data, compressed_data, image_name, comp_image_name, cfactor=0, info=''):
+        super(Array1D, self).__init__(data, compressed_data, image_name, comp_image_name, cfactor, info)
+
+    def Im_show_psd(self, version='original', freq_scale=1):
         """
         Displays the 1D power spectrum density of this image.
 
