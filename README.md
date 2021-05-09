@@ -12,7 +12,7 @@ data during the flight is crucial to evaluate payload performance, and debug any
 The use of compression algorithms proves to be an effective solution in increasing the rate at which data can
 be down-linked, while ensuring the down-linked data have sufficient quality for science analysis.
 
-<h1> OBCpy </h1> 
+<h1> OACpy </h1> 
 OACpy (Optimal Astronomer Compressor) is an efficient compression optimizer software that will find the most optimal compression factor to image quality ratio for a given image.
 <br>
 So far, Balco is able to compress JPEGS, PNGS, and FITS images.
