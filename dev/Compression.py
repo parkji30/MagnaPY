@@ -1,6 +1,7 @@
 from astropy.io import fits
 import numpy as np
 from Model_1D import Model1D
+from Model_2D import Model2D
 from Array_1D import Array1D
 from Array_2D import Array2D  
 import os, shutil
@@ -114,7 +115,7 @@ class Compression:
         @type self: Compression
         @type algorithm: String
             The desired compression algorithm to be used.
-            Compression List ----> ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
+            Compression List ----> ['RICE_1', 'GZIP_1', 'GZIP_2']
         @type compression_range: Tuple(Float, Float)
             Range of compression factors from min to max 
         @type iterations:
@@ -124,7 +125,6 @@ class Compression:
         if self.valid_extension():
             self.compress(algorithm=algorithm)
 
-            #Figure out a way to get a list of all the compressed images.
             compressed_images = os.listdir(self.save_directory)
             compressed_images.sort()
             self.compressed_directory = compressed_images
@@ -142,7 +142,7 @@ class Compression:
             # Have the model run it's analysis for its compressed images...
             compression_images = model.run_analysis()
 
-            model.show_residual_vs_compression_factor()
+            # model.show_residual_vs_compression_factor()
             # model.show_residual_PSD_vs_compression_factor() 
             # model.show_residual_vs_quantization_number()
             
@@ -166,23 +166,22 @@ class Compression:
         @type self: Compression
         @type algorithm: String
             The desired compression algorithm to be used.
-            Compression List ----> ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
+            Compression List ----> ['RICE_1', 'HCOMPRESS_1']
         @type compression_range: Tuple(Float, Float)
             Range of compression factors from min to max 
         @type iterations:
             compression factor forward steps.
         @rtype: None
         """
-        factors = np.linspace(compression_range[0], compression_range[1], iterations)
+        quantizors = np.linspace(compression_range[0], compression_range[1], iterations)
         if self.valid_extension():
-            for factor in factors:
-                self.compress(algorithm=algorithm, quantize_factor=factor)
+            for quant in quantizors:
+                self.compress(algorithm=algorithm, quantize_factor=quant)
             
-            #Figure out a way to get a list of all the compressed images.
             compressed_images = os.listdir(self.save_directory)
             compressed_images.sort()
             self.compressed_directory = compressed_images
-            model = Model(image_name = self.image_name, quantization_numbers=factors)
+            model = Model2D(image_name = self.image_name, quantization_numbers=quantizors)
 
             for comp_image in self.compressed_directory:
                 comp_file_size = os.path.getsize(self.save_directory + comp_image)
