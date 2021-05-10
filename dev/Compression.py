@@ -129,7 +129,7 @@ class Compression:
             compressed_images.sort()
             self.compressed_directory = compressed_images
             model = Model1D(self.image_name)
-            print(self.original_data)
+
             for comp_image in self.compressed_directory:
                 comp_file_size = os.path.getsize(self.save_directory + comp_image)
                 compressed_image_data = fits.getdata(self.save_directory + comp_image)
@@ -143,7 +143,7 @@ class Compression:
             compression_images = model.run_analysis()
 
             model.show_residual_vs_compression_factor()
-            model.show_residual_PSD_vs_compression_factor() 
+            # model.show_residual_PSD_vs_compression_factor() 
             # model.show_residual_vs_quantization_number()
             
             # finalize = int(input("Enter option number: "))

@@ -31,7 +31,7 @@ def empty_folder(folder):
 print("Compressed Directory")
 print(os.listdir((og_folder)))
 empty_folder(comp_folder)
-input('')
+
 
 # c_list = ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
 # try:
@@ -59,7 +59,7 @@ selected_image.Im_show()
 selected_image.Im_show(version="Compressed")
 
 ## Empties the compression(analysis) folder.
-empty_folder(comp_folder)
+# empty_folder(comp_folder)
 
 ## Save the image now.
 selected_image.save_image("/Users/a16472/Desktop/Balco/dev/")

@@ -1,8 +1,12 @@
 from Array import ArrayND
+from scipy import signal
 
 class Array1D(ArrayND):
     def __init__(self, data, compressed_data, image_name, comp_image_name, cfactor=0, info=''):
         super(Array1D, self).__init__(data, compressed_data, image_name, comp_image_name, cfactor, info)
+
+        self.original_psd, self.original_freqs = signal.welch(data)
+        self.compressed_psd, self.compressed_freqs = signal.welch(compressed_data)
 
     def Im_show_psd(self, version='original', freq_scale=1):
         """
@@ -12,22 +16,15 @@ class Array1D(ArrayND):
         @rtype: None
             Shows PSD figure of the image (1D).
         """
-        original = self.original_data
-        compressed = self.compressed_data
-
-        # Assume 1D
         try:
             plt.figure(figsize=(7, 7))
             plt.title("Power Spectral Density " + version)
             if version.lower() == 'original':
-                freqs, psd = signal.welch(original)
-                plt.semilogx(freqs * freq_scale, psd)
+                plt.semilogx(self.original_freqs * freq_scale, self.original_psd)
             elif version.lower() =='compressed':
-                freqs, psd = signal.welch(compressed)
-                plt.semilogx(freqs * freq_scale, psd)
+                plt.semilogx(self.compressed_freqs * freq_scale, self.compressed_psd)
             elif version.lower() == 'residual':
-                freqs, psd = signal.welch(original - compressed)
-                plt.semilogx(freqs * freq_scale, psd)
+                plt.semilogx(self.original_freqs-self.compressed_freqs, self.original_psd - self.compressed_psd)
             plt.colorbar()
             plt.xlabel("Frequency [Hz]")
             plt.ylabel("Power [Units]")

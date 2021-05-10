@@ -27,11 +27,19 @@ class ArrayND:
         @type info:
             Information of the image containing it's header.
         """
+        # Original array data.
         self.original_data = data
         self.data_modified = np.copy(self.original_data)
         self.compressed_data = compressed_data
         self.compressed_factor = round(cfactor, 4)
 
+        # Power spectrum density of the data.
+        self.original_psd = 0 
+        self.original_freqs = 0
+        self.compressed_psd = 0
+        self.compressed_freqs = 0
+
+        # Information about the data.
         self.image_name = image_name
         self.comp_image_name = comp_image_name
         self.info = info
@@ -118,6 +126,28 @@ class ArrayND:
             return [np.mean(original - compressed), \
                     np.median(original - compressed), \
                     np.std(original - compressed)]
+
+    def get_psd_data(self, version='original'):
+        """
+        Returns the power spectrum density of the data.
+
+        @type self: Array
+
+        @type version: String
+            1) Original returns the original image. 
+            2) Compressed returns the compressed image.
+            3) Difference returns original subtracted by the compressed image.
+
+        @rtype: String
+            Returns the mean, median and standard deviation of the selected
+            version.
+        """
+        if version.lower()=='original':
+            return self.original_psd
+        elif version.lower()=='compressed':
+            return self.compressed_psd
+        elif version.lower()=='residual':
+            return self.original_psd - self.compressed_psd
 
     def get_name(self, version='original'):
         """
