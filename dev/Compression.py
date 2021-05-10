@@ -1,9 +1,8 @@
 from astropy.io import fits
 import numpy as np
-from Model import Model
+from Model_1D import Model1D
 from Array_1D import Array1D
 from Array_2D import Array2D  
-from Array import ArrayND
 import os, shutil
 
 class Compression:
@@ -129,7 +128,7 @@ class Compression:
             compressed_images = os.listdir(self.save_directory)
             compressed_images.sort()
             self.compressed_directory = compressed_images
-            model = Model(image_name = self.image_name)
+            model = Model1D(self.image_name)
             print(self.original_data)
             for comp_image in self.compressed_directory:
                 comp_file_size = os.path.getsize(self.save_directory + comp_image)
@@ -144,8 +143,8 @@ class Compression:
             compression_images = model.run_analysis()
 
             model.show_residual_vs_compression_factor()
-            # model.show_residual_PSD_vs_compression_factor() 
-            model.show_residual_vs_quantization_number()
+            model.show_residual_PSD_vs_compression_factor() 
+            # model.show_residual_vs_quantization_number()
             
             # finalize = int(input("Enter option number: "))
             if len(compression_images) > 0:

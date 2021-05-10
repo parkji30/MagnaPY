@@ -1,4 +1,11 @@
+## Load Packages
 import os, shutil
+from Compression import Compression
+from Model import Model
+from astropy.io import fits
+
+original_images = './images/'
+comp_images = './comp_images/'
 
 ## Change this to where your balco is located.
 
@@ -21,15 +28,10 @@ def empty_folder(folder):
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 ## Delete the compression folder each time we run.
+print("Compressed Directory")
+print(os.listdir((og_folder)))
 empty_folder(comp_folder)
-
-## Load Packages
-from Compression import Compression
-from Model import Model
-from astropy.io import fits
-
-original_images = './images/'
-comp_images = './comp_images/'
+input('')
 
 # c_list = ['RICE_1', 'GZIP_1', 'GZIP_2', 'PLIO_1', 'HCOMPRESS_1']
 # try:
@@ -44,13 +46,12 @@ comp_images = './comp_images/'
 #     exit()
 
 img_name = 'L1M10_0.fits'
-original_image = fits.open(og_folder + img_name)[0].data
+original_data = fits.open(og_folder + img_name)[0].data
 file_size = os.path.getsize(og_folder + img_name)
 
-compressor = Compression(data=original_image, image_name=img_name, file_size=file_size)
+compressor = Compression(data=original_data, image_name=img_name, file_size=file_size)
 compressor.update_save_directory(comp_folder)
-# compressor.compress(algorithm='RICE_1')
-# selected_image = compressor.run_analysis_2D(algorithm="HCOMPRESS_1", compression_range=(0, 1), iterations=10)
+compressor.run_analysis_1D()
 selected_image = compressor.run_analysis_1D(algorithm='RICE_1')
 
 ## Model Analysis
