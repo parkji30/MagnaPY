@@ -14,8 +14,6 @@ be down-linked, while ensuring the down-linked data have sufficient quality for 
 
 <h1> OACpy </h1> 
 OACpy (Optimal Astronomer Compressor) is an efficient compression optimizer software that will find the most optimal compression factor to image quality ratio for a given image.
-<br>
-So far, Balco is able to compress JPEGS, PNGS, and FITS images.
 
 
 <h1>Python Dependencies</h1>
@@ -26,5 +24,3 @@ So far, Balco is able to compress JPEGS, PNGS, and FITS images.
 
 <h1>Installing</h1>
 Currently a working beta version is implemented in dev. Read the comments in Balco.py to to configure settings and run the program!
-
-<h1>Simple Example</h1>
