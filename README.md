@@ -20,6 +20,7 @@ OACpy (Optimal Astronomer Compressor) is an efficient compression optimizer soft
      1) Numpy
 <br> 2) Matplotlib
 <br> 3) Astropy
+<br> 4) Watchdog
 
 
 <h1>Installing</h1>
