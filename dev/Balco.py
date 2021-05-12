@@ -51,15 +51,18 @@ file_size = os.path.getsize(og_folder + img_name)
 
 compressor = Compression(data=original_data, image_name=img_name, file_size=file_size)
 compressor.update_save_directory(comp_folder)
-# selected_image = compressor.run_analysis_1D(algorithm='RICE_1')
-selected_image = compressor.run_analysis_2D(algorithm='HCOMPRESS_1', compression_range=(0, 2), iterations=4)
+
+if original_data.ndim == 1:
+    optimized_compressed_data = compressor.run_analysis_1D(algorithm='RICE_1')
+elif original_data.ndim == 2:
+    optimized_compressed_data = compressor.run_analysis_2D(algorithm='HCOMPRESS_1', compression_range=(0, 2), iterations=4)
 
 ## Model Analysis
-selected_image.Im_show()
-selected_image.Im_show(version="Compressed")
+optimized_compressed_data.Im_show()
+optimized_compressed_data.Im_show(version="residual")
 
 ## Empties the compression(analysis) folder.
-empty_folder(comp_folder)
+# empty_folder(comp_folder)
 
 ## Save the image now.
-selected_image.save_image("/Users/a16472/Desktop/Balco/dev/")
+optimized_compressed_data.save_image("/Users/a16472/Desktop/Balco/dev/")

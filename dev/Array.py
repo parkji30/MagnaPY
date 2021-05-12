@@ -246,8 +246,7 @@ class ArrayND:
             plt.imshow(self.compressed_data)
         elif version.lower() == 'residual':
             plt.title("Residual (Max & Min Value) " + self.image_name)
-            plt.imshow(np.max(self.original_data) - np.max(self.compressed_data), label='Max Value Residual')
-            plt.imshow(np.min(self.original_data) - np.min(self.compressed_data), label='Min Value Residual')
+            plt.imshow(self.original_data - self.compressed_data, label='Original/Compressed Difference')
         plt.colorbar()
         plt.show()
 
