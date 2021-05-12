@@ -20,7 +20,14 @@ OACpy (Optimal Astronomer Compressor) is an efficient compression optimizer soft
      1) Numpy
 <br> 2) Matplotlib
 <br> 3) Astropy
+<br> 4) Watchdog
 
 
 <h1>Installing</h1>
-Currently a working beta version is implemented in dev. Read the comments in Balco.py to to configure settings and run the program!
+Currently a working beta version is implemented in dev. Read the comments in Balco.py to to configure settings and run the program! Future models will be available for installing via pypi (pip3 install).
+
+<h1>Future Work</h1>
+     1) Manual selection of desired compressed image.
+<br> 2) Event listener for automated compression through TCP socket server.
+<br> 3) Expansion to other types of file extensions.
+
