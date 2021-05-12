@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy import signal
 from astropy.io import fits
 
-class Image:
+class ArrayND:
     def __init__(self, data, compressed_data, image_name, comp_image_name, cfactor=0, info=''):
         """
         @type self: Image
@@ -27,18 +27,19 @@ class Image:
         @type info:
             Information of the image containing it's header.
         """
+        # Original array data.
         self.original_data = data
         self.data_modified = np.copy(self.original_data)
         self.compressed_data = compressed_data
-
         self.compressed_factor = round(cfactor, 4)
 
-        fft = np.fft.fft2(data)
-        comp_fft = np.fft.fft2(compressed_data)
+        # Power spectrum density of the data.
+        self.original_psd = 0 
+        self.original_freqs = 0
+        self.compressed_psd = 0
+        self.compressed_freqs = 0
 
-        self.original_psd = np.power(np.abs(fft), 2)
-        self.compressed_psd = np.power(np.abs(comp_fft), 2)
-
+        # Information about the data.
         self.image_name = image_name
         self.comp_image_name = comp_image_name
         self.info = info
@@ -125,6 +126,28 @@ class Image:
             return [np.mean(original - compressed), \
                     np.median(original - compressed), \
                     np.std(original - compressed)]
+
+    def get_psd_data(self, version='original'):
+        """
+        Returns the power spectrum density of the data.
+
+        @type self: Array
+
+        @type version: String
+            1) Original returns the original image. 
+            2) Compressed returns the compressed image.
+            3) Difference returns original subtracted by the compressed image.
+
+        @rtype: String
+            Returns the mean, median and standard deviation of the selected
+            version.
+        """
+        if version.lower()=='original':
+            return self.original_psd
+        elif version.lower()=='compressed':
+            return self.compressed_psd
+        elif version.lower()=='residual':
+            return self.original_psd - self.compressed_psd
 
     def get_name(self, version='original'):
         """
@@ -223,79 +246,18 @@ class Image:
             plt.imshow(self.compressed_data)
         elif version.lower() == 'residual':
             plt.title("Residual (Max & Min Value) " + self.image_name)
-            plt.imshow(np.max(self.original_data) - np.max(self.compressed_data), label='Max Value Residual')
-            plt.imshow(np.min(self.original_data) - np.min(self.compressed_data), label='Min Value Residual')
+            plt.imshow(self.original_data - self.compressed_data, label='Original/Compressed Difference')
         plt.colorbar()
         plt.show()
 
-    def Im_show_psd_1D(self, version='original', freq_scale=1):
+    def Im_show_psd(self):
         """
-        Displays the 1D power spectrum density of this image.
+        Power Spectrum Analysis of array.
 
-        @type self: Image
+        To be implemented in child classes.
+
+        @type self: Array
         @rtype: None
-            Shows PSD figure of the image (1D).
+            Displays the PSD of the array.
         """
-        original = self.original_data
-        compressed = self.compressed_data
-
-        # Assume 1D
-        try:
-            plt.figure(figsize=(7, 7))
-            plt.title("Power Spectral Density " + version)
-            if version.lower() == 'original':
-                freqs, psd = signal.welch(original)
-                plt.semilogx(freqs * freq_scale, psd)
-            elif version.lower() =='compressed':
-                freqs, psd = signal.welch(compressed)
-                plt.semilogx(freqs * freq_scale, psd)
-            elif version.lower() == 'residual':
-                freqs, psd = signal.welch(original - compressed)
-                plt.semilogx(freqs * freq_scale, psd)
-            plt.colorbar()
-            plt.xlabel("Frequency [Hz]")
-            plt.ylabel("Power [Units]")
-            plt.show()
-        except:
-            print("1D PSD failed... probably dimensional error. Your image has " + str(original.ndim) + " dimensions")
-    
-    def Im_show_psd_2D(self, version='original', freq_scale=1):
-        """
-        Displays the 2D power spectrum density of this image.
-
-        @type self: Image
-
-        @type version: String
-            1) Original obtains the original image. 
-            2) Compressed obtains the compressed image.
-            3) Difference obtains original subtracted by the compressed image.
-
-        @type freq_scale: Float
-            Number to scale the frequency values by.
-
-        @rtype: None
-            Displays the version of the selected image as a matplotlib object.
-        """
-        original = self.original_data
-        compressed = self.compressed_data
-
-        # Assume 2D
-        try:
-            plt.figure(figsize=(7, 7))
-            plt.title("Power Spectral Density " + version)
-            if version.lower() == 'original':
-                fft = np.fft.fft2(original)
-                p2d = np.power(np.abs(fft) * freq_scale, 2) 
-                plt.imshow(np.fft.fftshift(np.log10(p2d)))
-            elif version.lower() =='compressed':
-                fft = np.fft.fft2(compressed)
-                p2d = np.power(np.abs(fft) * freq_scale, 2)
-                plt.imshow(np.fft.fftshift(np.log10(p2d)))
-            elif version.lower() == 'residual':
-                fft = np.fft.fft2(original-compressed)
-                p2d = np.power(np.abs(fft) * freq_scale, 2)
-                plt.imshow(np.fft.fftshift(np.log10(p2d)))
-            plt.colorbar()
-            plt.show()
-        except:
-            print("2D PSD failed... probably dimensional error. Your image has " + str(original.ndim) + " dimensions")
+        pass

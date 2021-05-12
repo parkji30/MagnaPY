@@ -13,7 +13,7 @@ class Model:
         (2) Power Spectrum Analysis
         (3) Image Reduction
     """
-    def __init__(self, image_name, quantization_numbers):
+    def __init__(self, image_name):
         """
         @type self: Model
         @type image_structure: ImageStructure Object
@@ -21,7 +21,7 @@ class Model:
         """
         self.original_image_name = image_name
         self.compressed_images = []
-        self.quantization_numbers = quantization_numbers
+        # self.quantization_numbers = quantization_numbers
 
     def get_image_name(self):
         """
