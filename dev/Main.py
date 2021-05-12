@@ -53,9 +53,9 @@ compressor = Compression(data=original_data, image_name=img_name, file_size=file
 compressor.update_save_directory(comp_folder)
 
 if original_data.ndim == 1:
-    optimized_compressed_data = compressor.run_analysis_1D(algorithm='RICE_1')
+    optimized_compressed_data = compressor.run_model_1D(algorithm='RICE_1')
 elif original_data.ndim == 2:
-    optimized_compressed_data = compressor.run_analysis_2D(algorithm='HCOMPRESS_1', compression_range=(0, 2), iterations=4)
+    optimized_compressed_data = compressor.run_model_2D(algorithm='HCOMPRESS_1', compression_range=(0, 2), iterations=4)
 
 ## Model Analysis
 optimized_compressed_data.Im_show()

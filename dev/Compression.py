@@ -106,7 +106,7 @@ class Compression:
                 quantize_level=quantize_factor).writeto(self.save_directory + compressed_name, overwrite=True)
                 self.image_compressed_name = compressed_name
 
-    def run_analysis_1D(self, algorithm='RICE_1'):
+    def run_model_1D(self, algorithm='RICE_1'):
         """
         Optimizer for 1 Dimension Array compression.
 
@@ -157,7 +157,7 @@ class Compression:
             # Removes all other images, but the best version.
             return selected_image
 
-    def run_analysis_2D(self, algorithm='HCOMPRESS_1', compression_range=(0, 2), iterations=4):
+    def run_model_2D(self, algorithm='HCOMPRESS_1', compression_range=(0, 2), iterations=4):
         """
         Optimizer for 2 dimension array compression.
 
