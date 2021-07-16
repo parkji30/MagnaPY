@@ -6,7 +6,7 @@ server.listen()
 
 client_socket, client_address = server.accept()
 
-file = open('yourdata.fits', "wb")
+file = open('server_image.fits', "wb")
 image_chunk = client_socket.recv(2048)  # stream-based protocol
 
 while image_chunk:

@@ -58,6 +58,7 @@ elif original_data.ndim == 2:
 
 ## Model Analysis
 optimized_compressed_data.Im_show()
+optimized_compressed_data.Im_show(version='compressed')
 optimized_compressed_data.Im_show(version="residual")
 
 ## Empties the compression(analysis) folder.
