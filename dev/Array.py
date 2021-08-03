@@ -80,17 +80,6 @@ class ArrayND:
         """
         self.data_modified = self.original_data - np.median(self.original_data)
 
-    def flat_field_reduction(self):
-        """
-        Flat field reduction of image to account for faulty light measurement
-        across camera
-
-        @type self: Image
-        @rtype: Numpy Array(2d) 
-            Image represented by its 2D pixel values
-        """
-        pass
-    
     def get_compressed_factor(self):
         """
         Returns the compression factor of the compressed Image.
