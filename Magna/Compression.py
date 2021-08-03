@@ -74,3 +74,5 @@ class Compression:
             compressed_name = algorithm+'_'+str(qf)+'_'+file
             fits.CompImageHDU(original_data, compression_type=algorithm, \
                 hcomp_scale=qf).writeto(self.compressed_directory_path+compressed_name, overwrite=True)
+                
+        return compressed_name
