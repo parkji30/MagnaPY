@@ -1,4 +1,4 @@
-<h1> Motivation </h1>
+# Motivation
 
 Balloon-borne telescopes have grown tremendously in their capabilities for capturing high quality science
 data. However, there is a challenge associated with these advancements: the limited down-link bandwidth
@@ -12,18 +12,13 @@ data during the flight is crucial to evaluate payload performance, and debug any
 The use of compression algorithms proves to be an effective solution in increasing the rate at which data can
 be down-linked, while ensuring the down-linked data have sufficient quality for science analysis.
 
-<h1> Magna </h1> 
-Magna is an efficient compression optimizer software that will find the most optimal compression factor to image quality ratio for a given image.
-
+# Magna 
+Magna is a real-time compression optimizer software that will allow the user to implement an optimal compression algorithm in any data pipeline.
 
 <h1>Python Dependencies</h1>
      1) Numpy
 <br> 2) Matplotlib
 <br> 3) Astropy
-
-
-<h1>Installing</h1>
-Currently a working beta version is implemented in dev. Read the comments in Balco.py to to configure settings and run the program! Future models will be available for installing via pypi (pip3 install).
 
 <h1>Future Work</h1>
      1) Manual selection of desired compressed image.
