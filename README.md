@@ -15,10 +15,12 @@ be down-linked, while ensuring the down-linked data have sufficient quality for 
 # Magna 
 Magna is a real-time compression optimizer software that will allow the user to implement an optimal compression algorithm in any data pipeline.
 
-<h1>Python Dependencies</h1>
-     1) Numpy
-<br> 2) Matplotlib
-<br> 3) Astropy
+```python
+import numpy
+import matplotlib.pyplot
+import astropy
+import scipy
+```
 
 <h1>Future Work</h1>
      1) Manual selection of desired compressed image.
