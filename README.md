@@ -12,18 +12,4 @@ data during the flight is crucial to evaluate payload performance, and debug any
 The use of compression algorithms proves to be an effective solution in increasing the rate at which data can
 be down-linked, while ensuring the down-linked data have sufficient quality for science analysis.
 
-# Magna 
-Magna is a real-time compression optimizer software that will allow the user to implement an optimal compression algorithm in any data pipeline.
-
-```python
-import numpy
-import matplotlib.pyplot
-import astropy
-import scipy
-```
-
-<h1>Future Work</h1>
-     1) Manual selection of desired compressed image.
-<br> 2) Event listener for automated compression through TCP socket server.
-<br> 3) Expansion to other types of file extensions.
 
