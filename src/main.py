@@ -9,6 +9,8 @@ dir = '/Users/a16472/Desktop/MagnaPY/TestImages'
 os.chdir(dir)
 images = os.listdir()
 
+##
+
 # 2) Run several Compression methods on each image
 compressor = Compression(dir)
 
