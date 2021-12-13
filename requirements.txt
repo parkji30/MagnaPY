@@ -1,0 +1,7 @@
+###### Requirements without Version Specifiers ######
+numpy
+matplotlib
+astropy
+scipy
+regions
+aplpy
