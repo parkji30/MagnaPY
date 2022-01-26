@@ -28,6 +28,3 @@ Make sure to install the dependencies using pip in Python by downloading the req
 pip install -r requirements.txt
 ```
 
-# Guide To Use
-Soon to write something here!
-
