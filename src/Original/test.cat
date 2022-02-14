@@ -1,0 +1,11 @@
+#   1 FLUX_AUTO              Flux within a Kron-like elliptical aperture                [count]
+#   2 X_IMAGE                Object position along x                                    [pixel]
+#   3 Y_IMAGE                Object position along y                                    [pixel]
+#   4 A_IMAGE                Profile RMS along major axis                               [pixel]
+#   5 B_IMAGE                Profile RMS along minor axis                               [pixel]
+#   6 FLUX_RADIUS            Fraction-of-light radii                                    [pixel]
+#   7 ELLIPTICITY            1 - B_IMAGE/A_IMAGE                                       
+#   8 ELONGATION             A_IMAGE/B_IMAGE                                           
+#   9 THETA_IMAGE            Position angle (CCW/x)                                     [deg]
+#  10 NUMBER                 Running object number                                     
+    931.3367     50.9724     50.9623     0.763     0.737      0.971    0.033    1.034 -40.75          1
