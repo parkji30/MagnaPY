@@ -14,29 +14,15 @@ be down-linked, while ensuring the down-linked data have sufficient quality for 
 
 # Magna
 
-Magna is an open source compression optimization software that will compress your data and analyze the information for you pre and post compression 
-ensuring the maximal compression factor possible while minimizing information loss to the data.
+Magna is an open source compression optimization software that uses machine and deep learning techniques to determine the optimal factor of a given algorithm based on the provided dataset.
 
-Magna will compress your data using HCOMPRESS, RICE, GZIP, BZIP2 and return the post compression results in a neat textfile. From there you can analyze 
-comrpession results for your data structure and inform magna which compression algorithm you wish to use.
+Magna will compress your data using HCOMPRESS, RICE, GZIP, BZIP2 and test the limitation of how much the test images can be quantized (lossy technique) with various algorithms in order to predict compression limits on future datasets.
 
 # Installation 
 
 Make sure to install the dependencies using pip in Python by downloading the requirements.txt file. This program is primarily used as a script and can be incorporated into your project.
 
 ```python
-pip install -r requirements.txt
-```
-
-# Image Compression Simulation
-
-An Image compression simulator that uses Source Extractor and Monte Carlo methods to examine the post compressive effects of different compression algorithms.
-
-
-# Dependencies
-Type the following below to install the required modules.
-
-```
 pip install -r requirements.txt
 ```
 
