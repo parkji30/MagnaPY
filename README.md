@@ -14,7 +14,7 @@ be down-linked, while ensuring the down-linked data have sufficient quality for 
 
 # Magna
 
-Magna is an open source compression optimization software that uses machine and deep learning techniques to determine the optimal factor of a given algorithm based on the provided dataset.
+Magna is an open source optimization software that uses machine and deep learning techniques to determine the optimal factor of a chosen compression algorithm based on the provided dataset.
 
 Magna will compress your data using HCOMPRESS, RICE, GZIP, BZIP2 and test the limitation of how much the test images can be quantized (lossy technique) with various algorithms in order to predict compression limits on future datasets.
 
