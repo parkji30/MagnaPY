@@ -611,6 +611,7 @@ class ImageCompression:
                 print("Median after "+label, np.median(img))
             if not nfig:
                 plt.show()
+                
         if algorithm == "bs":
             plothist(self.original_image, title="Pixel Value Distribution", \
             bins=10000, label="original")

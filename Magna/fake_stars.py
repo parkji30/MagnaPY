@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-# import fitsio
-from astropy.io import fitsio
+from astropy.io import fits
 from astropy.utils.data import download_file
 import os
 import random
@@ -10,8 +9,9 @@ class FakeStars():
     """
     A class object that generates fake sources or fake images.
     
-    NOTE- The generate sources are completely pseudo and do not represent a real 
-    science image in any manner.
+    NOTE- The generate sources are generated using statistical information from
+    existing data but are completely pseudo and do not represent a real 
+    science image.
     
     In order for this class to run, you need to necessary Python modules installed.
     
@@ -21,7 +21,8 @@ class FakeStars():
     
     def __init__(self, image_name, x_len, y_len):
         """
-        Initializes a new FakeStar object which represents a fake star image.
+        Initializes a new FakeStar object which represents either a fake space 
+        image or a fake singular point source.
         
         @type self: FakeStars
         @type image_name: String (The name of the image)
@@ -32,8 +33,8 @@ class FakeStars():
         self.name = image_name
         self.width = x_len
         self.height = y_len
-        self.image_array = np.zeros((self.width, self.height))
-        self.noise = np.zeros((self.width, self.height))
+        self._image_array = np.zeros((x_len, y_len))
+        self.noise = np.zeros((x_len, y_len))
           
     def generate_white_noise(self, std=29, mean=0):
         """
@@ -57,8 +58,7 @@ class FakeStars():
         The background has a median value of 1250.
         
         All this does is simply add the value 1250 to each individual pixel in 
-        the image. The median pixel count of a SuperBIT image is approximately 
-        1250; hence, the motivation for the value.
+        the image. 
         
         @type self: FakeStars
         @rtype: Numpy Array
@@ -67,24 +67,7 @@ class FakeStars():
         background = np.round(np.random.normal(mean, std, size = num_samples))
         return background
                         
-    def create_point_stars(self, num_stars):
-        """
-        Creates a fake single pixel to represent a hot pixel on a SuperBIT
-        image.
-        
-        The star will simply be a dot on the image with a high intensity 
-        brightness.
-        
-        @type self: FakeStars
-        @type num_stars: Integer
-        @rtype: Numpy Array
-        """
-        for i in range(num_stars):
-            point_star = random.randint(6000, 60000)
-            x_pos = random.randint(0, self.width-1) 
-            y_pos = random.randint(0, self.height-1)  
-            self.image_array[x_pos][y_pos] += point_star
-            
+ 
     def create_2d_gaussian(self, size, xfwhm=2, yfwhm=2, center=None, btness=400):
         """ Make a square gaussian kernel
     
@@ -107,26 +90,45 @@ class FakeStars():
         else:
             x0 = center[0]
             y0 = center[1]
-        return btness * np.exp(-4*np.log(2) * ((x-x0)**2/ xfwhm**2 + (y-y0)**2 / yfwhm**2))
+        return btness * np.exp(-4*np.log(2) * ((x-x0)**2 / xfwhm**2 + \
+                                               (y-y0)**2 / yfwhm**2))
+                                               
+    def create_point_stars(self, num_stars):
+        """
+        Creates a fake single pixel to represent a hot pixel on a SuperBIT
+        image.
         
-    def create_stars(self, generator, sz=20, xf=10, yf=10, bt= 200):
+        The star will simply be a dot on the image with a high intensity 
+        brightness.
+        
+        @type self: FakeStars
+        @type num_stars: Integer
+        @rtype: Numpy Array
+        """
+        for i in range(num_stars):
+            point_star = random.randint(6000, 60000)
+            x_pos = random.randint(0, self.width-1) 
+            y_pos = random.randint(0, self.height-1)  
+            self._image_array[x_pos][y_pos] += point_star
+        
+    def create_stars(self, generator=100, sz=20, xf=10, yf=10, amp=200):
         """
         Creates a certain number of fake star based on different parameters 
         based on the generator value. 
         
         @type self: FakeStars
         @type generator: Int (Number of Iterations)
-        @type sz: Size of Image in dimensions (Used to locate center)
+        @type sz: used to randomly step away from the designated point.
         @type xf: Int (FWHM in x direction)
         @type yf: Int (FWHM in y direction)
-        @type bt: Int (Brightest point in the star)
+        @type amp: Int (The Amplitude of the gaussian- how bright a star is)
         @rtype: None
         """
         while generator != 0:
-            x = random.randint(100, self.width-100)
-            y = random.randint(100, self.height-100)
-            source = self.create_2d_gaussian(size=sz, xfwhm=xf, yfwhm=yf, btness=bt)
-            self.image_array[x:x+sz, y:y+sz] += source
+            x = random.randint(100, self.width - 100)
+            y = random.randint(100, self.height - 100)
+            source = self.create_2d_gaussian(size=sz, xfwhm=xf, yfwhm=yf, btness=amp)
+            self._image_array[x:x+sz, y:y+sz] += source
             generator -= 1
         
     def create_cosmic_rays(self, amount):
@@ -149,19 +151,19 @@ class FakeStars():
                 if rotation == 0:
                     if x_pos >= 4400 or y_pos >= 6650:
                         break
-                    self.image_array[x_pos][y_pos] += brightness
+                    self._image_array[x_pos][y_pos] += brightness
                     x_pos += 1
                     y_pos -= 1
                 elif rotation == 1:
                     if x_pos >= 4400 or y_pos >= 6650:
                         break
-                    self.image_array[x_pos][y_pos] += brightness
+                    self._image_array[x_pos][y_pos] += brightness
                     x_pos += 1
                     y_pos += 1
                 else:
                     if x_pos >= 4400 or y_pos >= 6650:
                         break
-                    self.image_array[x_pos][y_pos] += brightness
+                    self._image_array[x_pos][y_pos] += brightness
                     x_pos += 1
                 size -=1
                 brightness -= 8000/500
@@ -191,7 +193,8 @@ class FakeStars():
         num_samples = sz*sz
         white_noise = np.round(np.random.normal(29, std, size=num_samples))
         white_noise = np.reshape(white_noise, (sz, sz))
-        self.image_array = star + white_noise
+        self.noise = white_noise
+        self._image_array = star + white_noise
         
     def create_image(self, signal=1, btness= 400):
         """
@@ -209,15 +212,15 @@ class FakeStars():
         self.noise = self.generate_white_noise()
         self.create_point_stars(signal*100)
         if type(btness) == list:
-            for sat in btness:
+            for amp in btness:
                 if random.randint(0, 25) == 1:
-                    self.create_stars(generator=signal * 5, sz=50*2, xf=5, yf=2, bt=sat)
+                    self.create_stars(generator=signal * 5, sz=50*2, xf=5, yf=2, amp=amp)
                 else:
-                    self.create_stars(generator=signal * 5, sz=50*2, xf=sat/40, yf=sat/40, bt=sat)
+                    self.create_stars(generator=signal * 5, sz=50*2, xf=amp/40, yf=amp/40, amp=amp)
         else:
-            self.create_stars(generator=signal*5, sz=30, xf=sat/40, yf=sat/40, bt=btness)
+            self.create_stars(generator=signal*5, sz=30, xf=amp/40, yf=amp/40, bt=btness)
         self.create_cosmic_rays(signal*3)
-        self.image_array += self.noise
+        self._image_array += self.noise
         
     def new_noise(self):
         """
@@ -227,21 +230,21 @@ class FakeStars():
         @type self: Fake_stars
         @rytpe: None
         """
-        self.image_array -= self.noise
+        self._image_array -= self.noise
         self.noise = self.generate_white_noise()
-        self.image_array += self.noise
+        self._image_array += self.noise
         
-    def cap_pixel_value(self):
+    def cap_pixel_value(self, bit_limit=64):
         """
         Limits the maximal pixal value to be below a 16 bit number
         
         @type self: Fake_Stars
         @rtype: None
         """
-        x, y = np.where(self.image_array > 65535)
+        x, y = np.where(self._image_array > 65535)
         if type(x) == np.ndarray and len(x) > 0:
             for i in range(len(x)):
-                self.image_array[x[i]][y[i]] = 65535
+                self._image_array[x[i]][y[i]] = 65535
         
     def show_image(self, together=True):
         """
@@ -257,27 +260,27 @@ class FakeStars():
             fig=plt.figure(figsize=(10, 10))
             columns = 2
             rows = 1
-            max = np.mean(self.image_array) + np.std(self.image_array) *3
-            min = np.mean(self.image_array) - np.std(self.image_array) *3
+            max = np.mean(self._image_array) + np.std(self._image_array) *3
+            min = np.mean(self._image_array) - np.std(self._image_array) *3
             fig.add_subplot(rows, columns, 1)
             plt.title("Normalized")        
-            plt.imshow(self.image_array, vmax=max, vmin=min)
+            plt.imshow(self._image_array, vmax=max, vmin=min)
             plt.colorbar()
             fig.add_subplot(rows, columns, 2)
             plt.title("Original")
-            plt.imshow(self.image_array)
+            plt.imshow(self._image_array)
             plt.colorbar()
             plt.show()
         else:
             plt.figure("Scaled")
             plt.title("Scaled")
-            max = np.mean(self.image_array) + np.std(self.image_array) *1
-            min = np.mean(self.image_array) - np.std(self.image_array) *1
-            plt.imshow(self.image_array, vmax=max, vmin=min)
+            max = np.mean(self._image_array) + np.std(self._image_array) *1
+            min = np.mean(self._image_array) - np.std(self._image_array) *1
+            plt.imshow(self._image_array, vmax=max, vmin=min)
             plt.colorbar()
             plt.figure("Original")
             plt.title("Original")
-            plt.imshow(self.image_array)
+            plt.imshow(self._image_array)
             plt.colorbar()
         plt.show()
 
@@ -292,8 +295,8 @@ class FakeStars():
         @type self: FakeStars
         @rtype: None
         """
-        fitsio.write(self.name + ".fits", self.image_array, \
-        header={'a': 'FILLER','b': 'FILLER','c': "FILLER"}, clobber=True)
+        hdu = fits.PrimaryHDU(data=self._image_array)
+        hdu.writeto(self.name + "large.fits", overwrite=True)
         
     def show_statistics(self):
         """
@@ -303,10 +306,10 @@ class FakeStars():
         @rtype: None
         """
         # Basic Statistics
-        self.median = np.median(self.image_array)
-        self.mean = np.mean(self.image_array)
-        self.min = np.min(self.image_array)
-        self.std = np.std(self.image_array)
+        self.median = np.median(self._image_array)
+        self.mean = np.mean(self._image_array)
+        self.min = np.min(self._image_array)
+        self.std = np.std(self._image_array)
         
         print("Mean: ", self.mean, "\n")
         print("Min: ", self.min, "\n")
@@ -320,16 +323,19 @@ class FakeStars():
         @type self: Fakestars
         @rtype: Numpy Array
         """
-        return self.image_array
+        return self._image_array
            
 ## (Example)
 
 if __name__ == '__main__':
-    os.chdir("/home/james/Desktop/sbit_compress_py/experiment/original")
+    os.chdir("/Users/a16472/desktop/")
 
     fakestar1 = FakeStars("fakestar1", 4400, 6650)
-    fakestar1.create_single_source(bt=250, xf=2, yf=2, sz=100)
-    # fakestar1.create_image(signal = 150, btness=[1200, 1000, 800, 200])
+    fakestar1.create_image(signal = 150, btness=[1200, 1000, 800, 200])
+    
+    # fakestar1 = FakeStars("fakestar1", 100, 100)
+    # fakestar1.create_single_source(bt=250, xf=2, yf=2, sz=100)
+
     fakestar1.cap_pixel_value()
     fakestar1.create_fits_image()
     fakestar1.show_image(together=False)
