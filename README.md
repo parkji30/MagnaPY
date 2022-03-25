@@ -1,5 +1,7 @@
 # Motivation
 
+Time Domain Analysis
+ 
 Balloon-borne telescopes have grown tremendously in their capabilities for capturing high quality science
 data. However, there is a challenge associated with these advancements: the limited down-link bandwidth
 available to most balloon payloads to transmit science data. 
